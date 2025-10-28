@@ -130,7 +130,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Lumen\Events\ApplicationEvent.h" />
-    <ClInclude Include="src\Lumen\Events\Event.cpp" />
+    <ClInclude Include="src\Lumen\Events\Event.h" />
     <ClInclude Include="src\Lumen\Events\KeyEvent.h" />
     <ClInclude Include="src\Lumen\Events\MouseEvent.h" />
     <ClInclude Include="src\Lumen\Log\Log.h" />

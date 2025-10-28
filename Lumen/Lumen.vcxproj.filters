@@ -30,7 +30,7 @@
     <ClInclude Include="src\Lumen\Log\Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Lumen\Events\Event.cpp">
+    <ClInclude Include="src\Lumen\Events\Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Lumen\Events\KeyEvent.h">

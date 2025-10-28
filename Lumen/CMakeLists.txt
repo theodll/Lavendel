@@ -32,5 +32,5 @@ endif()
 target_include_directories(Lumen
     PRIVATE
         ${CMAKE_SOURCE_DIR}/vendor/spdlog/include/
-        ${CMAKE_SOURCE_DIR}/src/ 
+        ${CMAKE_SOURCE_DIR}Lumen/src/ 
 )
