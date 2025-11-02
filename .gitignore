@@ -9,5 +9,6 @@ status
 
 .DS_Store
 
-Lavendel/vendor/spdlog
+Lavendel/vendor/*
+vendor/*
 cmake-build-debugf
