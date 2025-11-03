@@ -36,7 +36,7 @@ namespace Lavendel {
 	};
 
 
-	class LAVENDEL_API Event
+	class _declspec(dllexport) Event
 	{
 		friend class EventDispatcher;
 	public: 
@@ -53,7 +53,7 @@ namespace Lavendel {
 	};
 	
 
-	class LAVENDEL_API EventDispatcher
+	class _declspec(dllexport) EventDispatcher
 	{
 		template<typename T>
 		using EventFn = std::function<bool(T&)>;

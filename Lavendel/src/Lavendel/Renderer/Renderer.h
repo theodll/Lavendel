@@ -10,24 +10,20 @@ namespace Lavendel
 	namespace Renderer 
 	{
 	
-		class Window
+		class _declspec(dllexport) Window
 		{
 		public:
 			Window(const char* title, int width, int height);
 
 		private:
 
-
-
 			void initWindow(const char* title, int width, int height);
-			
 
-			const int m_Width;
-			const int m_Height;
-			const std::string m_Title;
+            const int m_Width = 960;
+			const int m_Height = 540;
+			const std::string m_Title = "Lavendel Engine Vulkan";
 
-			
-			GLFWwindow* m_Window;
+            GLFWwindow* m_Window;
 		};
 
 	}

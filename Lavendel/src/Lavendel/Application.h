@@ -4,7 +4,7 @@
 namespace Lavendel
 {
 
-	class LAVENDEL_API Application
+	class _declspec(dllexport) Application
 	{
 		public:
 			Application();

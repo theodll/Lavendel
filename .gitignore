@@ -10,6 +10,7 @@ status
 .DS_Store
 
 Lavendel/vendor/
-vendor
-
+vendor/
+#
+fzf.exe
 cmake-build-debug

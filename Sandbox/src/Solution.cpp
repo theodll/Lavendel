@@ -1,6 +1,6 @@
 #include <Lavendel.h>
 
-class Sandbox : public Lavendel::Application
+class Sandbox : public  Lavendel::Application
 {
 public: 
 		Sandbox() {}

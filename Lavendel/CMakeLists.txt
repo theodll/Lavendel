@@ -1,11 +1,20 @@
-
-file(GLOB_RECURSE ENGINE_SOURCES
-        "${CMAKE_SOURCE_DIR}/Lavendel/src/*.cpp"
-        "${CMAKE_SOURCE_DIR}/Lavendel/src/*.h"
-        "${CMAKE_SOURCE_DIR}/Lavendel/include/*.h"
+add_library(Lavendel SHARED
+        "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Core.h"
+        "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Application.h"
+        "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Application.cpp"
+        "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Entrypoint.h"
+        "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Renderer/Renderer.h"
+        "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Renderer/Renderer.cpp"
+        "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Log/Log.h"
+        "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Log/Log.cpp"
+        "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Events/ApplicationEvent.h"
+        "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Events/Event.h"
+        "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Events/KeyEvent.h"
+        "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Events/MouseEvent.h"
 )
 
-add_library(Lavendel SHARED ${ENGINE_SOURCES})
+target_compile_definitions(Lavendel PRIVATE LV_BUILD_DLL)
+add_definitions(-DLV_BUILD_DLL)
 
 
 add_subdirectory(vendor/spdlog)
@@ -36,7 +45,6 @@ target_compile_definitions(Lavendel PRIVATE
         $<$<CONFIG:Debug>:LV_DEBUG>
         $<$<CONFIG:Release>:LV_RELEASE>
         $<$<CONFIG:Dist>:LV_DIST>
-        LV_BUILD_DLL
 )
 
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "Log/Log.h"
-#ifdef LV_PLATFORM_WINDOWS
+
 
 extern Lavendel::Application* Lavendel::CreateApplication();
 
@@ -17,7 +17,6 @@ int main(int argc, char** argv)
 	delete app;
 }
 
-#endif
 
 
 #ifdef LV_PLATFORM_LINUX

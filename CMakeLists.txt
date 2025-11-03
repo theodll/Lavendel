@@ -8,6 +8,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+
 # === CONFIGURATIONS ===
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Dist" CACHE STRING "" FORCE)
 
@@ -46,3 +49,4 @@ add_compile_options(/UTF-8)
 add_subdirectory(Lavendel)
 add_subdirectory(Sandbox)
 
+target_compile_definitions(Lavendel PRIVATE LV_BUILD_DLL)

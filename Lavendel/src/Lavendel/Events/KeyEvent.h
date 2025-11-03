@@ -7,7 +7,7 @@
 
 namespace Lavendel
 {
-	class LAVENDEL_API KeyEvent : public Event
+	class _declspec(dllexport) KeyEvent : public Event
 	{
 	public: 
 		inline int GetKeyCode() const { return m_KeyCode; }
@@ -19,7 +19,7 @@ namespace Lavendel
 		int m_KeyCode;
 	};
 
-	class LAVENDEL_API KeyPressedEvent : public KeyEvent
+	class _declspec(dllexport) KeyPressedEvent : public KeyEvent
 	{
 	public: 
 		KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
@@ -37,7 +37,7 @@ namespace Lavendel
 		int m_RepeatCount;
 	}
 
-	class LAVENDEL_API KeyReleasedEvent : public KeyEvent
+	class _declspec(dllexport) KeyReleasedEvent : public KeyEvent
 	{
 	public:
 
