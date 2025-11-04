@@ -15,8 +15,8 @@ Lavendel::Application::~Application()
 
 void Lavendel::Application::Run()
 {
-
-	Lavendel::Window window(1280, 720, "Lavendel Engine");
+	// 1st and 2nd param are width and height, 3rd is title, 4th is resizable bool
+	Lavendel::RendererAPI::Window window(1280, 720, "Lavendel Engine", false);
 	
 	while (!window.ShouldClose())
 	{

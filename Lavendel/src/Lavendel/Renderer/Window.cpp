@@ -2,67 +2,69 @@
 #include "../Log.h"
 
 namespace Lavendel {
+	namespace RendererAPI {
 
-	static bool s_GLFWInitialized = false;
+		static bool s_GLFWInitialized = false;
 
-	Window::Window(int width, int height, const std::string& title) : m_Width(width), m_Height(height), m_Title(title) 
-	{
-		Init(width, height, title);
-	}
-
-	Window::~Window()
-	{
-		Shutdown();
-	};
-
-	// TODO: Logging
-
-	void Window::Init(int width, int height, const std::string& title)
-	{
-		if (!s_GLFWInitialized)
+		Window::Window(int width, int height, const std::string& title, bool bResizable) : m_Width(width), m_Height(height), m_Title(title), m_Resizable(bResizable)
 		{
-			glfwSetErrorCallback([](int code, const char* desc)
-								 {
-									 fprintf(stderr, "GLFW ERROR [%d]: %s\n", code, desc);
-								 });
+			Init(width, height, title, bResizable);
+		}
 
-			if (!glfwInit())
+		Window::~Window()
+		{
+			Shutdown();
+		};
+
+		// TODO: Logging
+
+		void Window::Init(int width, int height, const std::string& title, bool bResizable)
+		{
+			if (!s_GLFWInitialized)
 			{
-				LV_CORE_ERROR("Failed to initialize GLFW!");
+				if (!glfwInit())
+				{
+					LV_CORE_ERROR("Failed to initialize GLFW!");
+					return;
+				}
+
+				s_GLFWInitialized = true;
+			}
+
+
+			if (!bResizable)
+			{
+				glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+			}
+
+			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+			m_Window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+
+			if (!m_Window)
+			{
+				LV_CORE_ERROR("Failed to create GLFW window!");
 				return;
 			}
 
-			s_GLFWInitialized = true;
+			LV_CORE_INFO("Created Vulkan-compatible window!");
 		}
 
-		// Sag GLFW, dass du keinen OpenGL-Context willst
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-
-		m_Window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-		if (!m_Window)
+		void Window::Shutdown()
 		{
-			LV_CORE_ERROR("Failed to create GLFW window!");
-			return;
+			if (m_Window)
+			{
+				glfwDestroyWindow(m_Window);
+				m_Window = nullptr;
+			}
+
+			glfwTerminate();
+			s_GLFWInitialized = false;
+			LV_CORE_INFO("GLFW terminated");
+
+
 		}
-
-		LV_CORE_INFO("Created Vulkan-compatible window!");
-	}
-
-	void Window::Shutdown() 
-	{
-		if (m_Window)
-		{
-			glfwDestroyWindow(m_Window);
-			m_Window = nullptr;
-		}
-
-		glfwTerminate();
-		s_GLFWInitialized = false;
-		LV_CORE_INFO("GLFW terminated");
 
 
 	}
-
-
-
 }
