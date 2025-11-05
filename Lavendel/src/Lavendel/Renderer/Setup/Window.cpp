@@ -1,5 +1,5 @@
 #include "Window.h"
-#include "../Log.h"
+#include "../../Log.h"
 
 namespace Lavendel {
 	namespace RendererAPI {
@@ -66,5 +66,13 @@ namespace Lavendel {
 		}
 
 
+		void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface)
+		{
+			if (glfwCreateWindowSurface(instance, m_Window, nullptr, surface) != VK_SUCCESS)
+			{
+				throw std::runtime_error("failed to create window surface!");
+				LV_CORE_ERROR("Failed to create window surface!");
+			}
+		}
 	}
 }

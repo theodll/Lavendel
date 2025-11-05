@@ -2,8 +2,8 @@
 
 #include <string>
 #include <vector>
-#include "../Core.h"
-#include "../Log.h"
+#include "../../Core.h"
+#include "../../Log.h"
 
 namespace Lavendel {
 	namespace RendererAPI {

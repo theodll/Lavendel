@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../Core.h"
+#include "../../Core.h"
+#include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 #include <string>
 #include "Pipeline.h"
@@ -17,12 +18,16 @@ namespace Lavendel {
 
             void PollEvents() const { glfwPollEvents(); };
             bool ShouldClose() const { return glfwWindowShouldClose(m_Window); };
-            // void* GetNativeHandle() const { return m_Window; };
+            void* GetNativeHandle() const { return m_Window; };
+            void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
+
 
         private:
             void Init(int width, int height, const std::string& title, bool bResizable);
             void Shutdown();
         
+            
+
             GLFWwindow* m_Window;
             Pipeline m_Pipeline{"shaders/shader.vert.spv", "shaders/shader.frag.spv"};
 
