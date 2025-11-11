@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "Pipeline/Pipeline.h"
 
 namespace Lavendel {
 	namespace RenderAPI {

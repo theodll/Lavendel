@@ -25,9 +25,6 @@ namespace Lavendel
 		public:
 			Renderer(Window& window);
 			~Renderer();
-
-			Renderer(const Renderer&) = delete;
-			Renderer& operator=(const Renderer&) = delete;
 			
 			void drawFrame();
 
@@ -41,7 +38,7 @@ namespace Lavendel
 			std::shared_ptr<SwapChain> m_SwapChain;
 			std::shared_ptr<RenderAPI::Pipeline> m_Pipeline;
 			std::vector<VkCommandBuffer> m_CommandBuffers;
-			std::shared_ptr<PipelineLayout>
+			VkPipelineLayout m_PipelineLayout;
 		};
 	}
 }

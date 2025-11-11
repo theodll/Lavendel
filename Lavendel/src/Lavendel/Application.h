@@ -36,7 +36,7 @@ namespace Lavendel
 
 	private:
 		inline static RenderAPI::Window m_Window{ 1280, 720, "Lavendel Window", false };
-		RenderAPI::Renderer* m_Renderer;
+		std::shared_ptr<RenderAPI::Renderer> m_Renderer; 
 	};
 
 	// MUST BE DEFINED IN CLIENT

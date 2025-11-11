@@ -10,7 +10,7 @@ namespace Lavendel {
 
 	Application::Application()
 	{
-		
+		m_Renderer = std::make_shared<RenderAPI::Renderer>(m_Window);
 	}
 
 	Application::~Application()
