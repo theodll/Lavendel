@@ -10,7 +10,7 @@ namespace Lavendel {
         static bool s_SDLInitialized = false;
 
         Window::Window(int width, int height, const std::string& title, bool bResizable)
-            : m_Width(width), m_Height(height), m_Title(title), m_Resizable(bResizable)
+            : m_Width(width), m_Height(height), m_Title(title), m_bResizable(bResizable)
         {
             Init(width, height, title, bResizable);
         }
@@ -25,7 +25,7 @@ namespace Lavendel {
             m_Width = width;
             m_Height = height;
             m_Title = title;
-            m_Resizable = bResizable;
+            m_bResizable = bResizable;
 
             if (!s_SDLInitialized)
             {
@@ -47,6 +47,10 @@ namespace Lavendel {
                 LV_CORE_ERROR("Failed to create SDL window: {}", SDL_GetError());
                 return;
             }
+            
+            // Store the Window instance pointer for later retrieval using SDL3 properties
+            SDL_PropertiesID props = SDL_GetWindowProperties(m_Window);
+            SDL_SetPointerProperty(props, "WindowInstance", this);
         }
 
         void Window::Shutdown()
@@ -74,9 +78,24 @@ namespace Lavendel {
             {
                 if (event.type == SDL_EVENT_QUIT)
                     return true;
+
+                if (event.type == SDL_EVENT_WINDOW_RESIZED)
+                {
+					m_bFrameBufferResized = true;
+					m_Width = event.window.data1;
+					m_Height = event.window.data2;
+                }
+
+                if (event.type == SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED)
+                {
+                    m_bFrameBufferResized = true;
+                    m_Width = event.window.data1;
+                    m_Height = event.window.data2;
+                }
             }
             return false;
         }
+
 
     }
 }

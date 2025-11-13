@@ -34,6 +34,10 @@ namespace Lavendel
 			void createPipelineLayout();
 			void createPipeline();
 			void createCommandBuffers();
+			void recreateSwapChain();
+			void recordCommandBuffer(int imageIndex);
+			
+
 
 			Window& m_Window;
 			std::shared_ptr<GPUDevice> m_Device;

@@ -6,12 +6,12 @@ namespace Lavendel {
 
 		Renderer::Renderer(Window& window) : m_Window(window)
 		{
-			m_Device = std::make_unique<GPUDevice>(m_Window);
-			m_SwapChain = std::make_unique<SwapChain>(*m_Device, m_Window.getExtent());
+			m_Device = std::make_shared<GPUDevice>(m_Window);
+			m_SwapChain = std::make_shared<SwapChain>(*m_Device, m_Window.getExtent());
 
 			loadModels();
 			createPipelineLayout();
-			createPipeline();
+			createPipeline();  // Create pipeline directly instead of recreating swap chain
 			createCommandBuffers();
 		}
 
@@ -47,6 +47,20 @@ namespace Lavendel {
 				pipelineConfig);
 		}
 
+		void Renderer::recreateSwapChain()
+		{
+			auto extent = m_Window.getExtent();
+			while (extent.width == 0 || extent.height == 0)
+			{
+				extent = m_Window.getExtent();
+				SDL_WaitEvent(nullptr);
+			}
+
+			vkDeviceWaitIdle(m_Device->device());
+			m_SwapChain = std::make_shared<SwapChain>(*m_Device, extent);
+			createPipeline();
+		}
+
 
 		void Renderer::loadModels()
 		{
@@ -73,12 +87,14 @@ namespace Lavendel {
 				LV_CORE_ERROR("Failed to allocate command buffers!");
 				throw std::runtime_error("Failed to allocate command buffers!");
 			}
+		}
 
-			for (int i = 0; i < m_CommandBuffers.size(); i++)
-			{
+
+		void Renderer::recordCommandBuffer(int imageIndex)
+		{
 				VkCommandBufferBeginInfo beginInfo{};
 				beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-				if (vkBeginCommandBuffer(m_CommandBuffers[i], &beginInfo) != VK_SUCCESS)
+				if (vkBeginCommandBuffer(m_CommandBuffers[imageIndex], &beginInfo) != VK_SUCCESS)
 				{
 					LV_CORE_ERROR("Failed to begin recording command buffer!");
 					throw std::runtime_error("Failed to begin recording command buffer!");
@@ -87,7 +103,7 @@ namespace Lavendel {
 				VkRenderPassBeginInfo renderPassInfo{};
 				renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 				renderPassInfo.renderPass = m_SwapChain->getRenderPass();
-				renderPassInfo.framebuffer = m_SwapChain->getFrameBuffer(i);
+				renderPassInfo.framebuffer = m_SwapChain->getFrameBuffer(imageIndex);
 
 				renderPassInfo.renderArea.offset = { 0, 0 };
 				renderPassInfo.renderArea.extent = m_SwapChain->getSwapChainExtent();
@@ -98,29 +114,43 @@ namespace Lavendel {
 				renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 				renderPassInfo.pClearValues = clearValues.data();
 
-				vkCmdBeginRenderPass(m_CommandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+				vkCmdBeginRenderPass(m_CommandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-				m_Pipeline->bind(m_CommandBuffers[i]);
-				m_Model->bind(m_CommandBuffers[i]);
-				m_Model->draw(m_CommandBuffers[i]);
+				m_Pipeline->bind(m_CommandBuffers[imageIndex]);
+				m_Model->bind(m_CommandBuffers[imageIndex]);
+				m_Model->draw(m_CommandBuffers[imageIndex]);
 
-				vkCmdEndRenderPass(m_CommandBuffers[i]);
-				if (vkEndCommandBuffer(m_CommandBuffers[i]) != VK_SUCCESS)
+				vkCmdEndRenderPass(m_CommandBuffers[imageIndex]);
+				if (vkEndCommandBuffer(m_CommandBuffers[imageIndex]) != VK_SUCCESS)
 				{
 					LV_CORE_ERROR("Failed to record command buffer!");
 					throw std::runtime_error("Failed to record command buffer!");
 				}
-			}
 		}
 
 		void Renderer::drawFrame()
 		{
 			uint32_t imageIndex;
 			auto result = m_SwapChain->acquireNextImage(&imageIndex);
+
+			if (result == VK_ERROR_OUT_OF_DATE_KHR)
+			{
+				recreateSwapChain();
+				return;
+			}
+
 			if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 			{
 				LV_CORE_ERROR("Failed to acquire swap chain image!");
 				throw std::runtime_error("Failed to acquire swap chain image!");
+			}
+
+			recordCommandBuffer(imageIndex);
+			if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_Window.wasWindodwResized())
+			{
+				m_Window.resetWindowResizedFlag();
+				recreateSwapChain();
+				return;
 			}
 
 			result = m_SwapChain->submitCommandBuffers(&m_CommandBuffers[imageIndex], &imageIndex);
