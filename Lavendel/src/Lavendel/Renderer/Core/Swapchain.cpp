@@ -15,12 +15,14 @@ namespace Lavendel {
         SwapChain::SwapChain(GPUDevice& deviceRef, VkExtent2D windowExtent)
             : m_Device{ deviceRef }, windowExtent{ windowExtent }, m_OldSwapchain{ nullptr }
         {
+            LV_CORE_INFO("Creating Swapchain...");
             init();
         }
 
         SwapChain::SwapChain(GPUDevice& deviceRef, VkExtent2D windowExtent, std::shared_ptr<SwapChain> previous)
             : m_Device{ deviceRef }, windowExtent{ windowExtent }, m_OldSwapchain{ previous }
         {
+            LV_CORE_INFO("Creating Swapchain with old SwapChain...");
             init();
 			m_OldSwapchain = nullptr;
         }

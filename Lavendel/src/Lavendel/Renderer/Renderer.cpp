@@ -6,8 +6,9 @@ namespace Lavendel {
 
 		Renderer::Renderer(Window& window) : m_Window(window)
 		{
-			m_Device = std::make_shared<GPUDevice>(m_Window);
+			LV_CORE_INFO("Initializing Renderer...");
 
+			m_Device = std::make_shared<GPUDevice>(m_Window);
 			loadModels();
 			createPipelineLayout();
 			recreateSwapChain();

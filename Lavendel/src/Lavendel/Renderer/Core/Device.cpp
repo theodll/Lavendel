@@ -69,6 +69,7 @@ namespace Lavendel {
         // class member functions
         GPUDevice::GPUDevice(Window& window) : m_Window{ window }
         {
+            LV_CORE_INFO("Creating GPUDevice...");
             createInstance();
 			setupDebugMessenger(); // validation layers
             createSurface();

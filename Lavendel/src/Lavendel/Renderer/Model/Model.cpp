@@ -11,6 +11,7 @@ namespace Lavendel
     {
 		Model::Model(GPUDevice& device, const std::vector<Model::Vertex>& vertices) : m_Device{ device }
         {
+            LV_CORE_INFO("Creating Model...");
             createVertexBuffers(vertices);
         }
         Model::~Model()

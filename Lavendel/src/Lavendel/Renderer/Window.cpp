@@ -12,6 +12,7 @@ namespace Lavendel {
         Window::Window(int width, int height, const std::string& title, bool bResizable)
             : m_Width(width), m_Height(height), m_Title(title), m_bResizable(bResizable)
         {
+            LV_CORE_INFO("Creating Window...");
             Init(width, height, title, bResizable);
         }
 

@@ -24,6 +24,7 @@ namespace Lavendel {
 		Pipeline::Pipeline(GPUDevice& device, const std::string& vertFilepath, const std::string& fragFilePath, const PipelineConfigInfo& configInfo) 
 			: m_Device{ device }
 		{
+			LV_CORE_INFO("Creating Pipeline...");
 			createGraphicsPipeline(vertFilepath, fragFilePath, configInfo);
 		}
 
