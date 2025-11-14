@@ -7,12 +7,24 @@
 #include <limits>
 #include <set>
 #include <stdexcept>
+#include <cassert>
 
 namespace Lavendel {
     namespace RenderAPI {
 
         SwapChain::SwapChain(GPUDevice& deviceRef, VkExtent2D windowExtent)
-            : device{ deviceRef }, windowExtent{ windowExtent }
+            : m_Device{ deviceRef }, windowExtent{ windowExtent }, m_OldSwapchain{ nullptr }
+        {
+            init();
+        }
+
+        SwapChain::SwapChain(GPUDevice& deviceRef, VkExtent2D windowExtent, std::shared_ptr<SwapChain> previous)
+            : m_Device{ deviceRef }, windowExtent{ windowExtent }, m_OldSwapchain{ previous }
+        {
+            init();
+        }
+
+        void SwapChain::init()
         {
             createSwapChain();
             createImageViews();
@@ -24,63 +36,54 @@ namespace Lavendel {
 
         SwapChain::~SwapChain()
         {
-            // WICHTIG: Warte bis alle GPU-Operationen fertig sind!
-            vkDeviceWaitIdle(device.device());
-
             for (auto imageView : swapChainImageViews)
             {
-                vkDestroyImageView(device.device(), imageView, nullptr);
+                vkDestroyImageView(m_Device.device(), imageView, nullptr);
             }
             swapChainImageViews.clear();
 
-            if (swapChain != nullptr)
+            if (m_Swapchain != nullptr)
             {
-                vkDestroySwapchainKHR(device.device(), swapChain, nullptr);
-                swapChain = nullptr;
+                vkDestroySwapchainKHR(m_Device.device(), m_Swapchain, nullptr);
+                m_Swapchain = nullptr;
             }
 
             for (int i = 0; i < depthImages.size(); i++)
             {
-                vkDestroyImageView(device.device(), depthImageViews[i], nullptr);
-                vkDestroyImage(device.device(), depthImages[i], nullptr);
-                vkFreeMemory(device.device(), depthImageMemorys[i], nullptr);
+                vkDestroyImageView(m_Device.device(), depthImageViews[i], nullptr);
+                vkDestroyImage(m_Device.device(), depthImages[i], nullptr);
+                vkFreeMemory(m_Device.device(), depthImageMemorys[i], nullptr);
             }
 
             for (auto framebuffer : swapChainFramebuffers)
             {
-                vkDestroyFramebuffer(device.device(), framebuffer, nullptr);
+                vkDestroyFramebuffer(m_Device.device(), framebuffer, nullptr);
             }
 
-            vkDestroyRenderPass(device.device(), renderPass, nullptr);
+            vkDestroyRenderPass(m_Device.device(), renderPass, nullptr);
 
-            // Cleanup synchronization objects
             for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
             {
-                vkDestroySemaphore(device.device(), imageAvailableSemaphores[i], nullptr);
-                vkDestroyFence(device.device(), inFlightFences[i], nullptr);
-            }
-
-            for (size_t i = 0; i < imageCount(); i++)
-            {
-                vkDestroySemaphore(device.device(), renderFinishedSemaphores[i], nullptr);
+                vkDestroySemaphore(m_Device.device(), renderFinishedSemaphores[i], nullptr);
+                vkDestroySemaphore(m_Device.device(), imageAvailableSemaphores[i], nullptr);
+                vkDestroyFence(m_Device.device(), inFlightFences[i], nullptr);
             }
         }
 
         VkResult SwapChain::acquireNextImage(uint32_t* imageIndex)
         {
             vkWaitForFences(
-                device.device(),
+                m_Device.device(),
                 1,
                 &inFlightFences[currentFrame],
                 VK_TRUE,
                 std::numeric_limits<uint64_t>::max());
 
-            // Acquire signalisiert imageAvailableSemaphores[currentFrame]
             VkResult result = vkAcquireNextImageKHR(
-                device.device(),
-                swapChain,
+                m_Device.device(),
+                m_Swapchain,
                 std::numeric_limits<uint64_t>::max(),
-                imageAvailableSemaphores[currentFrame],  // Wird VON vkAcquire signalisiert
+                imageAvailableSemaphores[currentFrame],
                 VK_NULL_HANDLE,
                 imageIndex);
 
@@ -90,18 +93,15 @@ namespace Lavendel {
         VkResult SwapChain::submitCommandBuffers(
             const VkCommandBuffer* buffers, uint32_t* imageIndex)
         {
-            // Warte, falls dieses Image noch benutzt wird
             if (imagesInFlight[*imageIndex] != VK_NULL_HANDLE)
             {
-                vkWaitForFences(device.device(), 1, &imagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
+                vkWaitForFences(m_Device.device(), 1, &imagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
             }
-            // Markiere dieses Image als "in Benutzung" von diesem Frame
             imagesInFlight[*imageIndex] = inFlightFences[currentFrame];
 
             VkSubmitInfo submitInfo = {};
             submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-            // Warte auf imageAvailable von DIESEM Frame (currentFrame)
             VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
             VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
             submitInfo.waitSemaphoreCount = 1;
@@ -111,32 +111,29 @@ namespace Lavendel {
             submitInfo.commandBufferCount = 1;
             submitInfo.pCommandBuffers = buffers;
 
-            // Signalisiere renderFinished für DIESES Image (imageIndex)
-            VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[*imageIndex] };
+            VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
             submitInfo.signalSemaphoreCount = 1;
             submitInfo.pSignalSemaphores = signalSemaphores;
 
-            vkResetFences(device.device(), 1, &inFlightFences[currentFrame]);
-            if (vkQueueSubmit(device.graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) !=
+            vkResetFences(m_Device.device(), 1, &inFlightFences[currentFrame]);
+            if (vkQueueSubmit(m_Device.graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) !=
                 VK_SUCCESS)
             {
-                LV_CORE_ERROR("Failed to submit draw command buffer!");
                 throw std::runtime_error("failed to submit draw command buffer!");
             }
 
             VkPresentInfoKHR presentInfo = {};
             presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
-            // Warte auf renderFinished von DIESEM Image (imageIndex)
             presentInfo.waitSemaphoreCount = 1;
             presentInfo.pWaitSemaphores = signalSemaphores;
 
-            VkSwapchainKHR swapChains[] = { swapChain };
+            VkSwapchainKHR swapChains[] = { m_Swapchain };
             presentInfo.swapchainCount = 1;
             presentInfo.pSwapchains = swapChains;
             presentInfo.pImageIndices = imageIndex;
 
-            auto result = vkQueuePresentKHR(device.presentQueue(), &presentInfo);
+            auto result = vkQueuePresentKHR(m_Device.presentQueue(), &presentInfo);
 
             currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
@@ -145,7 +142,7 @@ namespace Lavendel {
 
         void SwapChain::createSwapChain()
         {
-            SwapChainSupportDetails swapChainSupport = device.getSwapChainSupport();
+            SwapChainSupportDetails swapChainSupport = m_Device.getSwapChainSupport();
 
             VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
             VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
@@ -160,7 +157,7 @@ namespace Lavendel {
 
             VkSwapchainCreateInfoKHR createInfo = {};
             createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-            createInfo.surface = device.surface();
+            createInfo.surface = m_Device.surface();
 
             createInfo.minImageCount = imageCount;
             createInfo.imageFormat = surfaceFormat.format;
@@ -169,7 +166,7 @@ namespace Lavendel {
             createInfo.imageArrayLayers = 1;
             createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-            QueueFamilyIndices indices = device.findPhysicalQueueFamilies();
+            QueueFamilyIndices indices = m_Device.findPhysicalQueueFamilies();
             uint32_t queueFamilyIndices[] = { indices.graphicsFamily, indices.presentFamily };
 
             if (indices.graphicsFamily != indices.presentFamily)
@@ -191,17 +188,16 @@ namespace Lavendel {
             createInfo.presentMode = presentMode;
             createInfo.clipped = VK_TRUE;
 
-            createInfo.oldSwapchain = VK_NULL_HANDLE;
+            createInfo.oldSwapchain = m_OldSwapchain == nullptr ? VK_NULL_HANDLE : m_OldSwapchain->m_Swapchain;
 
-            if (vkCreateSwapchainKHR(device.device(), &createInfo, nullptr, &swapChain) != VK_SUCCESS)
+            if (vkCreateSwapchainKHR(m_Device.device(), &createInfo, nullptr, &m_Swapchain) != VK_SUCCESS)
             {
-                LV_CORE_ERROR("Failed to create swap chain!");
                 throw std::runtime_error("failed to create swap chain!");
             }
 
-            vkGetSwapchainImagesKHR(device.device(), swapChain, &imageCount, nullptr);
+            vkGetSwapchainImagesKHR(m_Device.device(), m_Swapchain, &imageCount, nullptr);
             swapChainImages.resize(imageCount);
-            vkGetSwapchainImagesKHR(device.device(), swapChain, &imageCount, swapChainImages.data());
+            vkGetSwapchainImagesKHR(m_Device.device(), m_Swapchain, &imageCount, swapChainImages.data());
 
             swapChainImageFormat = surfaceFormat.format;
             swapChainExtent = extent;
@@ -223,10 +219,9 @@ namespace Lavendel {
                 viewInfo.subresourceRange.baseArrayLayer = 0;
                 viewInfo.subresourceRange.layerCount = 1;
 
-                if (vkCreateImageView(device.device(), &viewInfo, nullptr, &swapChainImageViews[i]) !=
+                if (vkCreateImageView(m_Device.device(), &viewInfo, nullptr, &swapChainImageViews[i]) !=
                     VK_SUCCESS)
                 {
-                    LV_CORE_ERROR("Failed to create texture image view!");
                     throw std::runtime_error("failed to create texture image view!");
                 }
             }
@@ -289,9 +284,8 @@ namespace Lavendel {
             renderPassInfo.dependencyCount = 1;
             renderPassInfo.pDependencies = &dependency;
 
-            if (vkCreateRenderPass(device.device(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS)
+            if (vkCreateRenderPass(m_Device.device(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS)
             {
-                LV_CORE_ERROR("Failed to create render pass!");
                 throw std::runtime_error("failed to create render pass!");
             }
         }
@@ -314,12 +308,11 @@ namespace Lavendel {
                 framebufferInfo.layers = 1;
 
                 if (vkCreateFramebuffer(
-                    device.device(),
+                    m_Device.device(),
                     &framebufferInfo,
                     nullptr,
                     &swapChainFramebuffers[i]) != VK_SUCCESS)
                 {
-                    LV_CORE_ERROR("Failed to create framebuffer!");
                     throw std::runtime_error("failed to create framebuffer!");
                 }
             }
@@ -352,7 +345,7 @@ namespace Lavendel {
                 imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
                 imageInfo.flags = 0;
 
-                device.createImageWithInfo(
+                m_Device.createImageWithInfo(
                     imageInfo,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     depthImages[i],
@@ -369,9 +362,8 @@ namespace Lavendel {
                 viewInfo.subresourceRange.baseArrayLayer = 0;
                 viewInfo.subresourceRange.layerCount = 1;
 
-                if (vkCreateImageView(device.device(), &viewInfo, nullptr, &depthImageViews[i]) != VK_SUCCESS)
+                if (vkCreateImageView(m_Device.device(), &viewInfo, nullptr, &depthImageViews[i]) != VK_SUCCESS)
                 {
-                    LV_CORE_ERROR("Failed to create texture image view!");
                     throw std::runtime_error("failed to create texture image view!");
                 }
             }
@@ -380,7 +372,7 @@ namespace Lavendel {
         void SwapChain::createSyncObjects()
         {
             imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-            renderFinishedSemaphores.resize(imageCount());
+            renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
             inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
             imagesInFlight.resize(imageCount(), VK_NULL_HANDLE);
 
@@ -393,22 +385,13 @@ namespace Lavendel {
 
             for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
             {
-                if (vkCreateSemaphore(device.device(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) !=
+                if (vkCreateSemaphore(m_Device.device(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) !=
                     VK_SUCCESS ||
-                    vkCreateFence(device.device(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS)
+                    vkCreateSemaphore(m_Device.device(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) !=
+                    VK_SUCCESS ||
+                    vkCreateFence(m_Device.device(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS)
                 {
-                    LV_CORE_ERROR("Failed to create synchronization objects for a frame!");
                     throw std::runtime_error("failed to create synchronization objects for a frame!");
-                }
-            }
-
-            for (size_t i = 0; i < imageCount(); i++)
-            {
-                if (vkCreateSemaphore(device.device(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) !=
-                    VK_SUCCESS)
-                {
-                    LV_CORE_ERROR("Failed to create render finished semaphore!");
-                    throw std::runtime_error("failed to create render finished semaphore!");
                 }
             }
         }
@@ -466,7 +449,7 @@ namespace Lavendel {
 
         VkFormat SwapChain::findDepthFormat()
         {
-            return device.findSupportedFormat(
+            return m_Device.findSupportedFormat(
                 { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
                 VK_IMAGE_TILING_OPTIMAL,
                 VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);

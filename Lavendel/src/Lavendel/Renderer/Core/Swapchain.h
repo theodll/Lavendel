@@ -4,6 +4,7 @@
 #include <vulkan/vulkan.h>
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace Lavendel {
     namespace RenderAPI {
@@ -14,6 +15,7 @@ namespace Lavendel {
             static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
             SwapChain(GPUDevice& deviceRef, VkExtent2D windowExtent);
+            SwapChain(GPUDevice& deviceRef, VkExtent2D windowExtent, std::shared_ptr<SwapChain> previous);
             ~SwapChain();
 
             SwapChain(const SwapChain&) = delete;
@@ -38,6 +40,7 @@ namespace Lavendel {
             VkResult submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
 
         private:
+            void init();
             void createSwapChain();
             void createImageViews();
             void createDepthResources();
@@ -63,16 +66,14 @@ namespace Lavendel {
             std::vector<VkImage> swapChainImages;
             std::vector<VkImageView> swapChainImageViews;
 
-            GPUDevice& device;
+            GPUDevice& m_Device;
             VkExtent2D windowExtent;
 
-            VkSwapchainKHR swapChain;
+            VkSwapchainKHR m_Swapchain;
+            std::shared_ptr<SwapChain> m_OldSwapchain;
 
-            // Semaphoren für Acquire (pro Frame-in-Flight)
             std::vector<VkSemaphore> imageAvailableSemaphores;
-            // Semaphoren für Render (pro Swapchain-Image)
             std::vector<VkSemaphore> renderFinishedSemaphores;
-            // Fences (pro Frame-in-Flight)
             std::vector<VkFence> inFlightFences;
             std::vector<VkFence> imagesInFlight;
             size_t currentFrame = 0;
