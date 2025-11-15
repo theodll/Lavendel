@@ -27,7 +27,7 @@ namespace Lavendel
     class LAVENDEL_API MouseScrolledEvent : public Event
     {
     public:
-        MouseScrolledEvent(float OffsetX, float OffsetY) : m_OffsetX(OffsetX), m_OffsetY(OffsetY);
+        MouseScrolledEvent(float OffsetX, float OffsetY) : m_OffsetX(OffsetX), m_OffsetY(OffsetY) {};
 
         inline float GetOffsetX() { return m_OffsetX; }
         inline float GetOffsetY() { return m_OffsetY; }
@@ -52,7 +52,6 @@ namespace Lavendel
         EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 
     protected:
-        MouseButtonEvent(int button) : m_Button(button) {}
 
         int m_Button;
     };
@@ -70,12 +69,14 @@ namespace Lavendel
         }
 
         EVENT_CLASS_TYPE(MouseButtonPressed)
+    private:
+        int m_Button;
     };
 
     class LAVENDEL_API MouseButtonReleasedEvent : public MouseButtonEvent
     {
     public:
-        MouseButtonReleasedEvent(int button) : m_Button(button) {};
+        MouseButtonReleasedEvent(int button) : m_Button(button) {}
 
         std::string ToString() const override
         {
@@ -86,5 +87,7 @@ namespace Lavendel
 
         EVENT_CLASS_TYPE(MouseButtonReleased)
 
+    private:
+        int m_Button;
     };
 }

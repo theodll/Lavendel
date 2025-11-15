@@ -16,7 +16,7 @@ namespace Lavendel
     {
         for (Layer* layer : m_Layers)
         {
-            delete Layer;
+            delete layer;
         }
     }
 

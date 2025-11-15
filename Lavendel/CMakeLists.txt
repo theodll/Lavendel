@@ -21,7 +21,14 @@ add_library(Lavendel SHARED
         src/Lavendel/Layers/Layer.cpp
         src/Lavendel/Layers/Layer.h
         src/Lavendel/Layers/LayerStack.cpp
-        src/Lavendel/Layers/LayerStack.h)
+        src/Lavendel/Layers/LayerStack.h
+        "src/Lavendel/ImGui/ImGuiLayer.h"
+        "src/Lavendel/ImGui/ImGuiLayer.cpp"
+        "src/Lavendel/ImGui/ImGuiRenderer.h"
+        "src/Lavendel/ImGui/ImGuiRenderer.cpp"
+        "src/Lavendel/ImGui/Widgets/DemoWidget.h"
+        "src/Lavendel/ImGui/Widgets/DemoWidget.cpp"
+)
 
 if(WIN32)
     target_compile_definitions(Lavendel PRIVATE LV_BUILD_DLL)
@@ -46,6 +53,8 @@ target_include_directories(Lavendel PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/vendor/sdl3/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui
+
 )
 
 
@@ -74,3 +83,20 @@ message(STATUS "Lavendel compile definitions: ${COMPILE_DEFS}")
 if(WIN32)
     add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 endif()
+
+set(IMGUI_SRC
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui_draw.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui_widgets.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui_tables.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/imgui_demo.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/imgui_impl_sdl3.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends/imgui_impl_vulkan.cpp
+)
+
+target_sources(Lavendel PRIVATE ${IMGUI_SRC})
+
+target_include_directories(Lavendel PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui/backends
+)

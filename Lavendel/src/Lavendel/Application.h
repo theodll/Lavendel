@@ -18,6 +18,7 @@ namespace Lavendel
 			virtual ~Application();
 			void Run();
 
+			void OnEvent(Event& e);
 			void operator=(const Application&) = delete;
 
 			static constexpr int WIDTH = 1280;

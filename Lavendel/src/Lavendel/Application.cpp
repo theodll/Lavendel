@@ -1,6 +1,7 @@
 #include "lvpch.h"
 #include "Application.h"
 #include "Renderer/Renderer.h"
+#include "Log.h"
 
 // CONSTRUCTOR 
 namespace Lavendel {
@@ -17,26 +18,44 @@ namespace Lavendel {
 	
 	}
 
+	void Application::OnEvent(Event& e)
+	{
+		EventDispatcher dispatcher(e);
+		// dispatcher.Dispatch<WindowCloseEvent>([](WindowCloseEvent& e) { return true; });
+		LV_CORE_TRACE("{0}", e.ToString());
+
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+		{
+			(*--it)->OnEvent(e);
+			if (e.IsHandled())
+				break;
+		}
+	}
+
+
+
 	// PUBLIC METHODS
 	void Application::PushLayer(Layer* layer)
 	{
-		m_LayerStack.PushLayer(layer)
+		m_LayerStack.PushLayer(layer);
 	}
 
 	void Application::PushOverlay(Layer* layer)
 	{
-		m_LayerStack.PushOverlay(layer)
+		m_LayerStack.PushOverlay(layer);
 	}
 
 	void Lavendel::Application::Run()
 	{
-		// 1st and 2nd param are width and height, 3rd is title, 4th is resizable bool
 
 		while (!m_Window.ShouldClose())
 		{
 			m_Window.PollEvents();
+			for (Layer* layer : m_LayerStack)
+				layer->OnUpdate();
+			
 			m_Renderer->drawFrame();
-		}
+		};
 	}
 
 }
