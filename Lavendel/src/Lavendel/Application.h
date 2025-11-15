@@ -1,16 +1,9 @@
 #pragma once
-#include "Core.h"
+#include "lvpch.h"
+
 #include "Renderer/Window.h"
-#include "Renderer/Core/Device.h"
-#include "Renderer/Pipeline/Pipeline.h"
-#include "Renderer/Core/Swapchain.h"
-#include "Renderer/Renderer.h" 
-#include "Log.h"
-// std
-#include <memory>
-#include <string>
-#include <vector>
-#include <stdexcept>
+#include "Renderer/Renderer.h"
+#include "Layers/LayerStack.h"
 
 namespace Lavendel
 {	
@@ -33,10 +26,13 @@ namespace Lavendel
 
 			static RenderAPI::Window& getWindow() { return m_Window; };
 
+			void PushLayer(Layer* layer);
+			void PushOverlay(Layer* overlay);
 
 	private:
 		inline static RenderAPI::Window m_Window{ 800, 600, "Lavendel Window", true };
-		std::shared_ptr<RenderAPI::Renderer> m_Renderer; 
+		std::shared_ptr<RenderAPI::Renderer> m_Renderer;
+		LayerStack m_LayerStack;
 	};
 
 	// MUST BE DEFINED IN CLIENT

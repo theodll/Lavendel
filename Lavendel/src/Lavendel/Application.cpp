@@ -18,6 +18,15 @@ namespace Lavendel {
 	}
 
 	// PUBLIC METHODS
+	void Application::PushLayer(Layer* layer)
+	{
+		m_LayerStack.PushLayer(layer)
+	}
+
+	void Application::PushOverlay(Layer* layer)
+	{
+		m_LayerStack.PushOverlay(layer)
+	}
 
 	void Lavendel::Application::Run()
 	{

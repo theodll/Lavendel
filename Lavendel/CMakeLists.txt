@@ -17,7 +17,11 @@ add_library(Lavendel SHARED
         src/Lavendel/Renderer/Model/Model.cpp
         src/Lavendel/Renderer/Model/Model.h
         src/lvpch.cpp
-        src/lvpch.h)
+        src/lvpch.h
+        src/Lavendel/Layers/Layer.cpp
+        src/Lavendel/Layers/Layer.h
+        src/Lavendel/Layers/LayerStack.cpp
+        src/Lavendel/Layers/LayerStack.h)
 
 if(WIN32)
     target_compile_definitions(Lavendel PRIVATE LV_BUILD_DLL)
@@ -58,6 +62,7 @@ target_include_directories(Lavendel
         ${CMAKE_SOURCE_DIR}/Lavendel/vendor/glfw/include/
         ${CMAKE_SOURCE_DIR}/Lavendel/vendor/glm/
         ${CMAKE_SOURCE_DIR}/Lavendel/src/
+        ${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel
 )
 
 target_precompile_headers(Lavendel PUBLIC ${CMAKE_SOURCE_DIR}/Lavendel/src/lvpch.h)

@@ -6,7 +6,7 @@
 #include "sstream"
 
 namespace Lavendel {
-	class _declspec(dllexport) WindowResizeEvent : public Event
+	class LAVENDEL_API WindowResizeEvent : public Event
 	{
 
 		public:
@@ -31,7 +31,7 @@ namespace Lavendel {
 
 	};
 
-	class _declspec(dllexport) WindowCloseEvent : public Event
+	class LAVENDEL_API WindowCloseEvent : public Event
 	{
 		public:
 			WindowCloseEvent() {};
@@ -40,7 +40,7 @@ namespace Lavendel {
 			EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	};
 
-	class _declspec(dllexport) AppTickEvent : public Event
+	class LAVENDEL_API AppTickEvent : public Event
 	{
 		public:
 			AppTickEvent() {};
@@ -49,7 +49,7 @@ namespace Lavendel {
 			EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	};
 
-	class _declspec(dllexport) AppUpdateEvent : public Event
+	class LAVENDEL_API AppUpdateEvent : public Event
 	{
 		public:
 			AppUpdateEvent() {};
@@ -58,7 +58,7 @@ namespace Lavendel {
 			EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	};
 
-	class _declspec(dllexport) AppRenderEvent : public Event
+	class LAVENDEL_API AppRenderEvent : public Event
 	{
 		public:
 			AppRenderEvent() {};

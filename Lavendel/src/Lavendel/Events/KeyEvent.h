@@ -1,13 +1,12 @@
 #pragma once
 
+#include "lvpch.h"
 #include "Event.h"
-
-#include <sstream>
 
 
 namespace Lavendel
 {
-	class _declspec(dllexport) KeyEvent : public Event
+	class LAVENDEL_API KeyEvent : public Event
 	{
 	public: 
 		inline int GetKeyCode() const { return m_KeyCode; }
@@ -19,7 +18,7 @@ namespace Lavendel
 		int m_KeyCode;
 	};
 
-	class _declspec(dllexport) KeyPressedEvent : public KeyEvent
+	class LAVENDEL_API KeyPressedEvent : public KeyEvent
 	{
 	public: 
 		KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
@@ -35,11 +34,22 @@ namespace Lavendel
 
 	private:
 		int m_RepeatCount;
-	}
+	};
 
-	class _declspec(dllexport) KeyReleasedEvent : public KeyEvent
+	class LAVENDEL_API KeyReleasedEvent : public KeyEvent
 	{
 	public:
+		KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "KeyReleasedEvent: " << m_KeyCode;
+			return ss.str();
+		}
+		EVENT_CLASS_TYPE(KeyReleased)
+
+
 
 	};
 }
