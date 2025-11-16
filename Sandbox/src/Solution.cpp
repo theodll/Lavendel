@@ -6,7 +6,7 @@ class ExampleLayer : public Lavendel::Layer
 	ExampleLayer() : Layer("Example") {}
 	void OnUpdate() override
 	{
-		LV_CORE_INFO("ExampleLayer::Update");
+		//LV_CORE_INFO("ExampleLayer::Update");
 	}
 	void OnEvent(Lavendel::Event& event) override
 	{

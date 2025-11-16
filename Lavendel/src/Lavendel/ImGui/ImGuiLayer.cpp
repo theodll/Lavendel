@@ -1,9 +1,11 @@
 #include "lvpch.h"
 #include "ImGuiLayer.h"
+#include <SDL3/SDL.h>
+#include "ImGuiRenderer.h"
 #include "Log.h"
 
 namespace Lavendel {
-	ImGuiLayer::ImGuiLayer() : Layer("ImGuiLayer"), m_DemoWidget("Lavendel Demo")
+	ImGuiLayer::ImGuiLayer(std::shared_ptr<RenderAPI::SwapChain>& swapchain, std::shared_ptr<RenderAPI::GPUDevice>& device) : Layer("ImGuiLayer"), m_Swapchain(swapchain), m_Device(device)
 	{
 	}
 	
@@ -13,7 +15,22 @@ namespace Lavendel {
 
 	void ImGuiLayer::OnAttach()
 	{
+		
+		m_Renderer.Init(m_Device->getInstance(),
+						m_Device->getPhysicalDevice(),
+						m_Device->device(),
+						m_Device->getGraphicsQueue(),
+						m_Device->getQueueFamilyIndex(),
+						m_Swapchain->getRenderPass()
+						);
+
+		ImGuiIO& io = ImGui::GetIO();
+		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+
+		
 		LV_CORE_INFO("ImGuiLayer attached");
+
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -30,17 +47,6 @@ namespace Lavendel {
 
 	void ImGuiLayer::OnUpdate()
 	{
-		// Render demo widget
-		m_DemoWidget.OnRender();
-	}
 
-	void ImGuiLayer::Begin()
-	{
-		m_Renderer.Begin();
+		m_Renderer.Render();
 	}
-
-	void ImGuiLayer::End()
-	{
-		m_Renderer.End();
-	}
-}

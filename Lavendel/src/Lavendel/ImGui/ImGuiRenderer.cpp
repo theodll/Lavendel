@@ -1,6 +1,7 @@
 #include "lvpch.h"
 #include "ImGuiRenderer.h"
 #include "Log.h"
+#include <SDL3/SDL.h>
 
 namespace Lavendel {
 	void ImGuiRenderer::Init(VkInstance instance, VkPhysicalDevice physicalDevice, VkDevice device,
@@ -54,8 +55,33 @@ namespace Lavendel {
 		LV_CORE_INFO("ImGui Renderer initialized with Vulkan");
 	}
 
+	void ImGuiRenderer::Render(VkCommandBuffer& commandBuffer)
+	{
+
+		ImGuiIO& io = ImGui::GetIO();
+
+		float time = SDL_GetTicks() / 1000.0f;
+		io.DeltaTime = m_Time > 0.0f ? (time - m_Time) : (1.0f / 60.0f);
+		m_Time = time;
+
+		static bool show = true;
+		ImGui::ShowDemoWindow(&show);
+
+		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
+	}
+
 	void ImGuiRenderer::Begin()
 	{
+
+			// Ensure display size is valid before ImGui frame
+		auto extent = m_SwapChain->getSwapChainExtent();
+		ImGui::GetIO().DisplaySize = ImVec2(
+			static_cast<float>(extent.width),
+			static_cast<float>(extent.height)
+		);
+	
+		
+
 		ImGui_ImplVulkan_NewFrame();
 		ImGui::NewFrame();
 	}
@@ -63,12 +89,6 @@ namespace Lavendel {
 	void ImGuiRenderer::End()
 	{
 		ImGui::Render();
-	}
-
-	void ImGuiRenderer::Render(VkCommandBuffer commandBuffer)
-	{
-		ImDrawData* draw_data = ImGui::GetDrawData();
-		ImGui_ImplVulkan_RenderDrawData(draw_data, commandBuffer);
 	}
 
 	void ImGuiRenderer::Shutdown()

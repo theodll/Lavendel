@@ -12,8 +12,8 @@ namespace Lavendel {
 	{
 		m_Renderer = std::make_shared<RenderAPI::Renderer>(m_Window);
 		
-		// Initialize and attach ImGui layer
-		m_ImGuiLayer = new ImGuiLayer();
+		
+		m_ImGuiLayer = new ImGuiLayer(&m_Renderer->getPipeline(), &m_Renderer->getDevice());
 		PushOverlay(m_ImGuiLayer);
 	}
 
@@ -26,7 +26,7 @@ namespace Lavendel {
 	{
 		EventDispatcher dispatcher(e);
 		// dispatcher.Dispatch<WindowCloseEvent>([](WindowCloseEvent& e) { return true; });
-		LV_CORE_TRACE("{0}", e.ToString());
+		//LV_CORE_TRACE("{0}", e.ToString());
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
@@ -38,7 +38,6 @@ namespace Lavendel {
 
 
 
-	// PUBLIC METHODS
 	void Application::PushLayer(Layer* layer)
 	{
 		m_LayerStack.PushLayer(layer);
@@ -56,14 +55,11 @@ namespace Lavendel {
 		{
 			m_Window.PollEvents();
 			
-			// Begin ImGui frame
 			m_Renderer->beginImGuiFrame();
 			
-			// Update layers
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 			
-			// End ImGui frame and render
 			m_Renderer->endImGuiFrame();
 			m_Renderer->drawFrame();
 		};

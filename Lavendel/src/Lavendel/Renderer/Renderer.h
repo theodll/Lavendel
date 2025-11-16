@@ -27,6 +27,11 @@ namespace Lavendel
 			void initImGui();
 			void beginImGuiFrame();
 			void endImGuiFrame();
+
+			inline std::shared_ptr<GPUDevice> getDevice() { return m_Device; }
+			inline std::shared_ptr<SwapChain> getSwapChain() { return m_SwapChain; }
+			inline std::shared_ptr<Pipeline> getPipeline() { return m_Pipeline; }
+
 			ImGuiRenderer& getImGuiRenderer() { return m_ImGuiRenderer; }
 
 		private:
