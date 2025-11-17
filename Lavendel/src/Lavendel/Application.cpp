@@ -6,15 +6,10 @@
 // CONSTRUCTOR 
 namespace Lavendel {
 
-
-
 	Application::Application()
 	{
 		m_Renderer = std::make_shared<RenderAPI::Renderer>(m_Window);
 		
-		
-		m_ImGuiLayer = new ImGuiLayer(&m_Renderer->getPipeline(), &m_Renderer->getDevice());
-		PushOverlay(m_ImGuiLayer);
 	}
 
 	Application::~Application()
@@ -50,17 +45,13 @@ namespace Lavendel {
 
 	void Lavendel::Application::Run()
 	{
-
 		while (!m_Window.ShouldClose())
 		{
 			m_Window.PollEvents();
 			
-			m_Renderer->beginImGuiFrame();
-			
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 			
-			m_Renderer->endImGuiFrame();
 			m_Renderer->drawFrame();
 		};
 	}

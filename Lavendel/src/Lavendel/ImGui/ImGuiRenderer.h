@@ -14,19 +14,22 @@ struct VkFramebuffer_T;
 namespace Lavendel {
 	class ImGuiRenderer {
 	public:
-		ImGuiRenderer(std::shared_ptr<RenderAPI::SwapChain>& swapchain);
+		ImGuiRenderer(std::shared_ptr<RenderAPI::SwapChain> swapchain, std::shared_ptr<RenderAPI::GPUDevice> device, SDL_Window* window);
 		~ImGuiRenderer() = default;
+
 		
-		void Init(VkInstance instance, VkPhysicalDevice physicalDevice, VkDevice device, 
-		          VkQueue queue, uint32_t queueFamily, VkRenderPass renderPass);
+		void Init();
 		void Render(VkCommandBuffer& commandBuffer);
 		void Shutdown();
 		void Begin();
 		void End();
 		
 	private:
-		RenderAPI::SwapChain& m_Swapchain;
+		std::shared_ptr<RenderAPI::SwapChain> m_Swapchain;
+		std::shared_ptr<RenderAPI::GPUDevice> m_Device;
 		VkDescriptorPool_T* m_DescriptorPool = nullptr;
+		SDL_Window* m_Window = nullptr;
+
 		float m_Time = 0.0f;
 	};
 }

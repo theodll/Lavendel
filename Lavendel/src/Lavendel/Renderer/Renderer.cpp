@@ -1,6 +1,7 @@
 #include "lvpch.h"
 #include "Renderer.h"
 #include "Pipeline/Pipeline.h"
+#include "Lavendel/ImGui/ImGuiLayer.h"
 
 namespace Lavendel {
 	namespace RenderAPI {
@@ -14,13 +15,11 @@ namespace Lavendel {
 			createPipelineLayout();
 			recreateSwapChain();
 			createCommandBuffers();
-			initImGui();
 		}
 
 		Renderer::~Renderer()
 		{
 			vkDestroyPipelineLayout(m_Device->device(), m_PipelineLayout, nullptr);
-			m_ImGuiRenderer.Shutdown();
 		}
 
 		void Renderer::createPipelineLayout()
@@ -62,14 +61,6 @@ namespace Lavendel {
 
 			vkDeviceWaitIdle(m_Device->device());
 
-			// Shutdown ImGui before recreating swap chain
-			bool wasImGuiInitialized = m_ImGuiInitialized;
-			if (m_ImGuiInitialized)
-			{
-				m_ImGuiRenderer.Shutdown();
-				m_ImGuiInitialized = false;
-			}
-
 			if (m_SwapChain == nullptr)
 			{
 				m_SwapChain = std::make_shared<SwapChain>(*m_Device, extent);
@@ -86,12 +77,6 @@ namespace Lavendel {
 				}
 			}
 			createPipeline();
-
-			// Reinitialize ImGui after swap chain is ready
-			if (wasImGuiInitialized)
-			{
-				initImGui();
-			}
 		}
 
 		void Renderer::loadModels()
@@ -173,9 +158,11 @@ namespace Lavendel {
 			m_Model->bind(m_CommandBuffers[imageIndex]);
 			m_Model->draw(m_CommandBuffers[imageIndex]);
 
-			// Render ImGui on top of scene
-			if (m_ImGuiInitialized)
-				m_ImGuiRenderer.Render(m_CommandBuffers[imageIndex]);
+			// Render ImGui on top of scene if layer is set
+			if (m_ImGuiLayer != nullptr)
+			{
+				m_ImGuiLayer->GetRenderer().Render(m_CommandBuffers[imageIndex]);
+			}
 
 			vkCmdEndRenderPass(m_CommandBuffers[imageIndex]);
 			if (vkEndCommandBuffer(m_CommandBuffers[imageIndex]) != VK_SUCCESS)
@@ -218,41 +205,6 @@ namespace Lavendel {
 			}
 		}
 
-		void Renderer::initImGui()
-		{
-			if (m_ImGuiInitialized)
-				return;
 
-			m_ImGuiRenderer.Init(
-				m_Device->getInstance(),
-				m_Device->getPhysicalDevice(),
-				m_Device->device(),
-				m_Device->getGraphicsQueue(),
-				m_Device->getQueueFamilyIndex(),
-				m_SwapChain->getRenderPass()
-			);
-
-			m_ImGuiInitialized = true;
-			LV_CORE_INFO("ImGui initialized successfully");
-		}
-
-		void Renderer::beginImGuiFrame()
-		{
-			if (m_ImGuiInitialized) {
-				// Ensure display size is valid before ImGui frame
-				auto extent = m_SwapChain->getSwapChainExtent();
-				ImGui::GetIO().DisplaySize = ImVec2(
-					static_cast<float>(extent.width),
-					static_cast<float>(extent.height)
-				);
-				m_ImGuiRenderer.Begin();
-			}
-		}
-
-		void Renderer::endImGuiFrame()
-		{
-			if (m_ImGuiInitialized)
-				m_ImGuiRenderer.End();
-		}
 	}  // namespace RenderAPI
-}
+}  // namespace Lavendel

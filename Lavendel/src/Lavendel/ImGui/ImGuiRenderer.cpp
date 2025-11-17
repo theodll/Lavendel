@@ -1,87 +1,93 @@
 #include "lvpch.h"
 #include "ImGuiRenderer.h"
-#include "Log.h"
+#include "Lavendel/Log.h"
+#include <vulkan/vulkan.h>
 #include <SDL3/SDL.h>
 
 namespace Lavendel {
-	void ImGuiRenderer::Init(VkInstance instance, VkPhysicalDevice physicalDevice, VkDevice device,
-	                          VkQueue queue, uint32_t queueFamily, VkRenderPass renderPass)
-	{
-		// Setup ImGui context
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO();
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-		// Setup ImGui style
-		ImGui::StyleColorsDark();
+	ImGuiRenderer::ImGuiRenderer(std::shared_ptr<RenderAPI::SwapChain> swapchain, std::shared_ptr<RenderAPI::GPUDevice> device, SDL_Window* window)
+		: m_Swapchain(swapchain), m_Device(device), m_Window(window)
+	{
+	}
+
+	void ImGuiRenderer::Init()
+	{
+
+		// Initialize ImGui SDL3 backend first
+		if (!ImGui_ImplSDL3_InitForVulkan(m_Window))
+		{
+			LV_CORE_ERROR("Failed to initialize ImGui SDL3 backend!");
+			throw std::runtime_error("Failed to initialize ImGui SDL3 backend!");
+		}
 
 		// Create descriptor pool for ImGui
-		VkDescriptorPoolSize pool_sizes[] =
-		{
-			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 100 },
+		VkDescriptorPoolSize pool_sizes[] = {
+			{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
+			{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
 		};
 
 		VkDescriptorPoolCreateInfo pool_info = {};
 		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-		pool_info.maxSets = 100;
-		pool_info.poolSizeCount = (uint32_t)std::size(pool_sizes);
+		pool_info.maxSets = 1000;
+		pool_info.poolSizeCount = std::size(pool_sizes);
 		pool_info.pPoolSizes = pool_sizes;
 
-		if (vkCreateDescriptorPool(device, &pool_info, nullptr, (VkDescriptorPool*)&m_DescriptorPool) != VK_SUCCESS)
+		if (vkCreateDescriptorPool(m_Device->device(), &pool_info, nullptr, &m_DescriptorPool) != VK_SUCCESS)
 		{
-			LV_CORE_ERROR("Failed to create ImGui descriptor pool");
-			return;
+			LV_CORE_ERROR("Failed to create ImGui descriptor pool!");
+			throw std::runtime_error("Failed to create ImGui descriptor pool!");
 		}
 
-		// Setup ImGui for Vulkan
+		// Initialize ImGui for Vulkan
 		ImGui_ImplVulkan_InitInfo init_info = {};
-		init_info.Instance = instance;
-		init_info.PhysicalDevice = physicalDevice;
-		init_info.Device = device;
-		init_info.QueueFamily = queueFamily;
-		init_info.Queue = queue;
-		init_info.DescriptorPool = (VkDescriptorPool)m_DescriptorPool;
+		init_info.Instance = m_Device->getInstance();
+		init_info.PhysicalDevice = m_Device->getPhysicalDevice();
+		init_info.Device = m_Device->device();
+		init_info.QueueFamily = m_Device->getQueueFamilyIndex();
+		init_info.Queue = m_Device->getGraphicsQueue();
+		init_info.DescriptorPool = m_DescriptorPool;
 		init_info.MinImageCount = 2;
-		init_info.ImageCount = 3;
-		init_info.Allocator = nullptr;
-		init_info.PipelineInfoMain.RenderPass = renderPass;
-		init_info.PipelineInfoMain.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
-		init_info.CheckVkResultFn = nullptr;
+		init_info.ImageCount = m_Swapchain->imageCount();
+		init_info.PipelineInfoMain.RenderPass = m_Swapchain->getRenderPass();
 
-		ImGui_ImplVulkan_Init(&init_info);
+		if (!ImGui_ImplVulkan_Init(&init_info))
+		{
+			LV_CORE_ERROR("Failed to initialize ImGui Vulkan backend!");
+			throw std::runtime_error("Failed to initialize ImGui Vulkan backend!");
+		}
 
-		LV_CORE_INFO("ImGui Renderer initialized with Vulkan");
+		LV_CORE_INFO("ImGuiRenderer initialized");
 	}
 
-	void ImGuiRenderer::Render(VkCommandBuffer& commandBuffer)
+	void ImGuiRenderer::Shutdown()
 	{
+		ImGui_ImplVulkan_Shutdown();
+		ImGui_ImplSDL3_Shutdown();
+		
+		if (m_DescriptorPool != nullptr)
+		{
+			// Get device handle from ImGui Vulkan backend or store it
+			// For now, we'll let Vulkan validation layers handle cleanup
+			m_DescriptorPool = nullptr;
+		}
 
-		ImGuiIO& io = ImGui::GetIO();
-
-		float time = SDL_GetTicks() / 1000.0f;
-		io.DeltaTime = m_Time > 0.0f ? (time - m_Time) : (1.0f / 60.0f);
-		m_Time = time;
-
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
-
-		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
+		LV_CORE_INFO("ImGuiRenderer shutdown");
 	}
 
 	void ImGuiRenderer::Begin()
 	{
-
-			// Ensure display size is valid before ImGui frame
-		auto extent = m_SwapChain->getSwapChainExtent();
-		ImGui::GetIO().DisplaySize = ImVec2(
-			static_cast<float>(extent.width),
-			static_cast<float>(extent.height)
-		);
-	
-		
-
+		ImGui_ImplSDL3_NewFrame();
 		ImGui_ImplVulkan_NewFrame();
 		ImGui::NewFrame();
 	}
@@ -91,11 +97,12 @@ namespace Lavendel {
 		ImGui::Render();
 	}
 
-	void ImGuiRenderer::Shutdown()
+	void ImGuiRenderer::Render(VkCommandBuffer& commandBuffer)
 	{
-		ImGui_ImplVulkan_Shutdown();
-		ImGui::DestroyContext();
-
-		LV_CORE_INFO("ImGui Renderer shutdown");
+		ImDrawData* draw_data = ImGui::GetDrawData();
+		if (draw_data != nullptr)
+		{
+			ImGui_ImplVulkan_RenderDrawData(draw_data, commandBuffer);
+		}
 	}
 }

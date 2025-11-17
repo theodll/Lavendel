@@ -12,3 +12,6 @@
 
 // ====== ENTRYPOINT INCLUDES ====== //
 #include "Lavendel/Entrypoint.h"
+
+
+#include "Lavendel/ImGui/ImGuiLayer.h"

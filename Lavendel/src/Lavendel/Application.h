@@ -28,6 +28,8 @@ namespace Lavendel
 
 			static RenderAPI::Window& getWindow() { return m_Window; };
 
+	
+
 			void PushLayer(Layer* layer);
 			void PushOverlay(Layer* overlay);
 

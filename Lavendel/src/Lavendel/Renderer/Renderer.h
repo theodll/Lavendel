@@ -5,13 +5,13 @@
 #include "Pipeline/Pipeline.h"
 #include "Core/Swapchain.h"
 #include "Model/Model.h"
-#include "ImGui/ImGuiRenderer.h"
 
 
 namespace Lavendel
 {
 	// Forward declaration
 	class Application;
+	class ImGuiLayer;
 
 	namespace RenderAPI
 	{
@@ -23,16 +23,12 @@ namespace Lavendel
 			
 			void drawFrame();
 			
-			// ImGui integration
-			void initImGui();
-			void beginImGuiFrame();
-			void endImGuiFrame();
+			// Set ImGui layer for rendering
+			void setImGuiLayer(ImGuiLayer* layer) { m_ImGuiLayer = layer; }
 
-			inline std::shared_ptr<GPUDevice> getDevice() { return m_Device; }
-			inline std::shared_ptr<SwapChain> getSwapChain() { return m_SwapChain; }
-			inline std::shared_ptr<Pipeline> getPipeline() { return m_Pipeline; }
-
-			ImGuiRenderer& getImGuiRenderer() { return m_ImGuiRenderer; }
+			inline static const std::shared_ptr<GPUDevice> getDevice() { return m_Device; }
+			inline static const std::shared_ptr<SwapChain> getSwapChain()  { return m_SwapChain; }
+			inline static const std::shared_ptr<Pipeline> getPipeline() { return m_Pipeline; }
 
 		private:
 			void loadModels();
@@ -42,18 +38,15 @@ namespace Lavendel
 			void freeCommandBuffers();
 			void recreateSwapChain();
 			void recordCommandBuffer(int imageIndex);
-			
-
 
 			Window& m_Window;
-			std::shared_ptr<GPUDevice> m_Device;
-			std::shared_ptr<SwapChain> m_SwapChain;
-			std::shared_ptr<RenderAPI::Pipeline> m_Pipeline;
+			static std::shared_ptr<GPUDevice> m_Device;
+			static std::shared_ptr<SwapChain> m_SwapChain;
+			static std::shared_ptr<RenderAPI::Pipeline> m_Pipeline;
 			std::shared_ptr<Model> m_Model;
 			std::vector<VkCommandBuffer> m_CommandBuffers;
 			VkPipelineLayout m_PipelineLayout;
-			ImGuiRenderer m_ImGuiRenderer;
-			bool m_ImGuiInitialized = false;
+			ImGuiLayer* m_ImGuiLayer = nullptr;
 		};
 	}
 }

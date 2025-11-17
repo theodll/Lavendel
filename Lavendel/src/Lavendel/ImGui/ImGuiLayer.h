@@ -8,12 +8,17 @@
 #include "Lavendel/Renderer/Core/Device.h"	
 #include "Lavendel/Renderer/Renderer.h"
 
+struct SDL_Window;
+
 namespace Lavendel {
 	class ImGuiLayer : public Layer
 	{
 	public:
-		ImGuiLayer(std::shared_ptr<RenderAPI::SwapChain>& swapchain, std::shared_ptr<RenderAPI::GPUDevice>& device);
+		ImGuiLayer();
 		~ImGuiLayer();
+
+		ImGuiLayer(const ImGuiLayer&) = delete;
+		ImGuiLayer& operator=(const ImGuiLayer&) = delete;
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
@@ -22,14 +27,16 @@ namespace Lavendel {
 
 		void Begin();
 		void End();
+		
+		// Allow renderer to record ImGui commands
+		ImGuiRenderer& GetRenderer() { return *m_Renderer; }
 
 	private:
-		ImGuiRenderer m_Renderer;
-		DemoWidget m_DemoWidget;
-
-		std::shared_ptr<RenderAPI::SwapChain>& m_Swapchain;
+		std::shared_ptr<ImGuiRenderer> m_Renderer;
+		
 		std::shared_ptr<RenderAPI::GPUDevice>& m_Device;
 
+		DemoWidget m_DemoWidget;
 
 	}; 
 }

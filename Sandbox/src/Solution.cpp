@@ -14,12 +14,15 @@ class ExampleLayer : public Lavendel::Layer
 	}
 }; 
 
+
+
 class Sandbox : public  Lavendel::Application
 {
 public: 
 		Sandbox() 
 		{
 			PushLayer(new ExampleLayer());
+			PushLayer(new Lavendel::ImGuiLayer());
 		}
 		~Sandbox() {}
 };
