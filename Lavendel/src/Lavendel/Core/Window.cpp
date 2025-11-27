@@ -6,7 +6,6 @@
 
 
 namespace Lavendel {
-    namespace RenderAPI {
 
         static bool s_SDLInitialized = false;
 
@@ -106,5 +105,5 @@ namespace Lavendel {
         }
 
 
-    }
+    
 }
