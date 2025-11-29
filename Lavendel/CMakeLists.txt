@@ -11,17 +11,17 @@ add_library(Lavendel SHARED
         "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Events/Event.h"
         "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Events/KeyEvent.h"
         "${CMAKE_SOURCE_DIR}/Lavendel/src/Lavendel/Events/MouseEvent.h"
-        "src/Lavendel/Renderer/Window.cpp" "src/Lavendel/Renderer/Window.h" "src/Lavendel/Renderer/Pipeline/Pipeline.h" 
+        "src/Lavendel/Renderer/Window.cpp" "src/Lavendel/Renderer/Window.h" "src/Lavendel/Renderer/Pipeline/Pipeline.h"
         "src/Lavendel/Renderer/Pipeline/Pipeline.cpp" "src/Lavendel/Renderer/Core/Device.cpp" "src/Lavendel/Renderer/Core/Device.h"
         "src/Lavendel/Renderer/Core/Swapchain.cpp" "src/Lavendel/Renderer/Core/Swapchain.h" "src/Lavendel/Renderer/Renderer.h" "src/Lavendel/Renderer/Renderer.cpp"
-        src/Lavendel/Renderer/Model/Model.cpp
-        src/Lavendel/Renderer/Model/Model.h
-        src/lvpch.cpp
-        src/lvpch.h
-        src/Lavendel/Layers/Layer.cpp
-        src/Lavendel/Layers/Layer.h
-        src/Lavendel/Layers/LayerStack.cpp
-        src/Lavendel/Layers/LayerStack.h
+        "src/Lavendel/Renderer/Model/Model.cpp"
+        "src/Lavendel/Renderer/Model/Model.h"
+        "src/lvpch.cpp"
+        "src/lvpch.h"
+        "src/Lavendel/Layers/Layer.cpp"
+        "src/Lavendel/Layers/Layer.h"
+        "src/Lavendel/Layers/LayerStack.cpp"
+        "src/Lavendel/Layers/LayerStack.h"
         "src/Lavendel/ImGui/ImGuiLayer.h"
         "src/Lavendel/ImGui/ImGuiLayer.cpp"
         "src/Lavendel/ImGui/ImGuiRenderer.h"
@@ -29,7 +29,13 @@ add_library(Lavendel SHARED
         "src/Lavendel/ImGui/Widgets/DemoWidget.h"
         "src/Lavendel/ImGui/Widgets/DemoWidget.cpp"
         "src/Lavendel/Utils/Profiling/Instrumentor.h"
- "src/Lavendel/Renderer/Model/GameObject.cpp" "src/Lavendel/Renderer/Model/GameObject.h")
+        "src/Lavendel/Renderer/Model/GameObject.cpp"
+        "src/Lavendel/Renderer/Model/GameObject.h"
+        "src/Lavendel/Renderer/Framebuffer.h"
+        "src/Lavendel/Renderer/Framebuffer.cpp"
+        "Plattform/VulkanFramebuffer.cpp"
+        "Plattform/VulkanFramebuffer.h"
+ )
 
 if(WIN32 OR UNIX)
     set(SHADER_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders)
