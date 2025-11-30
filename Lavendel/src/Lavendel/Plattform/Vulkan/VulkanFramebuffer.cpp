@@ -1,12 +1,7 @@
 #include "VulkanFramebuffer.h"
-#include <array>
 #include <stdexcept>
 
 namespace Lavendel::RenderAPI {
-
-// ============================================
-// Hilfsfunktionen
-// ============================================
 
 VkFormat VulkanFramebuffer::FramebufferTextureFormatToVulkan(
     FramebufferTextureFormat format) {
@@ -37,19 +32,10 @@ bool VulkanFramebuffer::IsDepthFormat(FramebufferTextureFormat format) {
   }
 }
 
-// ============================================
-// Konstruktor / Destruktor
-// ============================================
-
 VulkanFramebuffer::VulkanFramebuffer(GPUDevice *device,
                                      const FramebufferSpecification &spec)
     : m_Device(device), m_Specification(spec),
       m_DepthAttachmentSpecification(FramebufferTextureFormat::None) {
-
-  // Da deine FramebufferSpecification keine Attachment-Infos hat,
-  // erstellen wir Standard-Attachments:
-  // - 1x RGBA8 Color Attachment
-  // - 1x Depth24Stencil8 Depth Attachment
 
   m_ColorAttachmentSpecifications.push_back(
       FramebufferTextureSpecification(FramebufferTextureFormat::RGBA8));
@@ -62,28 +48,21 @@ VulkanFramebuffer::VulkanFramebuffer(GPUDevice *device,
 
 VulkanFramebuffer::~VulkanFramebuffer() { Cleanup(); }
 
-// ============================================
-// Cleanup
-// ============================================
-
 void VulkanFramebuffer::Cleanup() {
   if (m_Device == VK_NULL_HANDLE)
     return;
 
   vkDeviceWaitIdle(m_Device->device());
-  // Framebuffer zerstören
   if (m_Framebuffer != VK_NULL_HANDLE) {
     vkDestroyFramebuffer(m_Device->device(), m_Framebuffer, nullptr);
     m_Framebuffer = VK_NULL_HANDLE;
   }
 
-  // RenderPass zerstören
   if (m_RenderPass != VK_NULL_HANDLE) {
     vkDestroyRenderPass(m_Device->device(), m_RenderPass, nullptr);
     m_RenderPass = VK_NULL_HANDLE;
   }
 
-  // Color Attachments aufräumen
   for (size_t i = 0; i < m_ColorImages.size(); i++) {
     if (m_ColorImageViews[i] != VK_NULL_HANDLE)
       vkDestroyImageView(m_Device->device(), m_ColorImageViews[i], nullptr);
@@ -96,7 +75,6 @@ void VulkanFramebuffer::Cleanup() {
   m_ColorMemories.clear();
   m_ColorImageViews.clear();
 
-  // Depth Attachment aufräumen
   if (m_DepthImageView != VK_NULL_HANDLE) {
     vkDestroyImageView(m_Device->device(), m_DepthImageView, nullptr);
     m_DepthImageView = VK_NULL_HANDLE;
@@ -110,7 +88,6 @@ void VulkanFramebuffer::Cleanup() {
     m_DepthMemory = VK_NULL_HANDLE;
   }
 
-  // Staging Buffer aufräumen
   if (m_StagingBuffer != VK_NULL_HANDLE) {
     vkDestroyBuffer(m_Device->device(), m_StagingBuffer, nullptr);
     m_StagingBuffer = VK_NULL_HANDLE;
@@ -121,10 +98,6 @@ void VulkanFramebuffer::Cleanup() {
   }
 }
 
-// ============================================
-// Invalidate - Erstellt alle Ressourcen neu
-// ============================================
-
 void VulkanFramebuffer::Invalidate() {
   Cleanup();
 
@@ -134,10 +107,6 @@ void VulkanFramebuffer::Invalidate() {
   CreateFramebuffer();
 }
 
-// ============================================
-// RenderPass erstellen
-// ============================================
-
 void VulkanFramebuffer::CreateRenderPass() {
   std::vector<VkAttachmentDescription> attachments;
   std::vector<VkAttachmentReference> colorAttachmentRefs;
@@ -145,7 +114,6 @@ void VulkanFramebuffer::CreateRenderPass() {
   VkSampleCountFlagBits sampleCount =
       static_cast<VkSampleCountFlagBits>(m_Specification.Samples);
 
-  // Color Attachments
   for (size_t i = 0; i < m_ColorAttachmentSpecifications.size(); i++) {
     VkAttachmentDescription colorAttachment{};
     colorAttachment.format = FramebufferTextureFormatToVulkan(
@@ -166,7 +134,6 @@ void VulkanFramebuffer::CreateRenderPass() {
     colorAttachmentRefs.push_back(colorRef);
   }
 
-  // Depth Attachment
   VkAttachmentReference depthAttachmentRef{};
   bool hasDepth = m_DepthAttachmentSpecification.TextureFormat !=
                   FramebufferTextureFormat::None;
@@ -191,7 +158,6 @@ void VulkanFramebuffer::CreateRenderPass() {
     attachments.push_back(depthAttachment);
   }
 
-  // Subpass
   VkSubpassDescription subpass{};
   subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
   subpass.colorAttachmentCount =
@@ -199,7 +165,6 @@ void VulkanFramebuffer::CreateRenderPass() {
   subpass.pColorAttachments = colorAttachmentRefs.data();
   subpass.pDepthStencilAttachment = hasDepth ? &depthAttachmentRef : nullptr;
 
-  // Subpass Dependency
   VkSubpassDependency dependency{};
   dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
   dependency.dstSubpass = 0;
@@ -211,7 +176,6 @@ void VulkanFramebuffer::CreateRenderPass() {
   dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT |
                              VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
-  // RenderPass erstellen
   VkRenderPassCreateInfo renderPassInfo{};
   renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
   renderPassInfo.attachmentCount = static_cast<u32>(attachments.size());
@@ -227,15 +191,10 @@ void VulkanFramebuffer::CreateRenderPass() {
   }
 }
 
-// ============================================
-// Images erstellen
-// ============================================
-
 void VulkanFramebuffer::CreateImages() {
   VkSampleCountFlagBits sampleCount =
       static_cast<VkSampleCountFlagBits>(m_Specification.Samples);
 
-  // Color Images
   for (const auto &spec : m_ColorAttachmentSpecifications) {
     VkImage image;
     VkDeviceMemory memory;
@@ -262,7 +221,6 @@ void VulkanFramebuffer::CreateImages() {
       throw std::runtime_error("Failed to create color image!");
     }
 
-    // Memory allokieren
     VkMemoryRequirements memRequirements;
     vkGetImageMemoryRequirements(m_Device->device(), image, &memRequirements);
 
@@ -283,7 +241,6 @@ void VulkanFramebuffer::CreateImages() {
     m_ColorMemories.push_back(memory);
   }
 
-  // Depth Image
   if (m_DepthAttachmentSpecification.TextureFormat !=
       FramebufferTextureFormat::None) {
     VkImageCreateInfo imageInfo{};
@@ -319,17 +276,11 @@ void VulkanFramebuffer::CreateImages() {
                          &m_DepthMemory) != VK_SUCCESS) {
       throw std::runtime_error("Failed to allocate depth image memory!");
     }
-
     vkBindImageMemory(m_Device->device(), m_DepthImage, m_DepthMemory, 0);
   }
 }
 
-// ============================================
-// ImageViews erstellen
-// ============================================
-
 void VulkanFramebuffer::CreateImageViews() {
-  // Color Image Views
   for (size_t i = 0; i < m_ColorImages.size(); i++) {
     VkImageViewCreateInfo viewInfo{};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -355,7 +306,6 @@ void VulkanFramebuffer::CreateImageViews() {
     m_ColorImageViews.push_back(imageView);
   }
 
-  // Depth Image View
   if (m_DepthImage != VK_NULL_HANDLE) {
     VkImageViewCreateInfo viewInfo{};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -365,7 +315,6 @@ void VulkanFramebuffer::CreateImageViews() {
         m_DepthAttachmentSpecification.TextureFormat);
     viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 
-    // Falls Stencil vorhanden
     if (m_DepthAttachmentSpecification.TextureFormat ==
         FramebufferTextureFormat::DEPTH24STENCIL8) {
       viewInfo.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
@@ -503,5 +452,4 @@ uint32_t VulkanFramebuffer::FindMemoryType(uint32_t typeFilter,
 
   throw std::runtime_error("Failed to find suitable memory type!");
 }
-
 } // namespace Lavendel::RenderAPI
