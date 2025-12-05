@@ -15,7 +15,7 @@ namespace Velt {
         };
         
 
-        class Velt_API Window
+        class LAVENDEL_API Window
         {
         public:
             Window(int width, int height, const std::string& title, bool bResizable = false);

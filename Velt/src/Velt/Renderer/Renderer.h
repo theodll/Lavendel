@@ -1,7 +1,7 @@
 #pragma once
 #include "vtpch.h"
 #include "Window.h"
-#include "Core/Device.h"
+#include "Platorm/Vulkan/Device.h"
 #include "Pipeline/Pipeline.h"
 #include "Core/Swapchain.h"
 #include "Model/Model.h"
@@ -16,7 +16,7 @@ namespace Velt
 
 	namespace RenderAPI
 	{
-		class Velt_API Renderer
+		class LAVENDEL_API Renderer
 		{
 		public:
 			Renderer(Window& window);
@@ -33,7 +33,7 @@ namespace Velt
 			static void requestShutdown();
 			static void Shutdown();
 
-			inline static GPUDevice* getDevice() { return m_Device; }
+			inline static VulkanDevice* getDevice() { return m_Device; }
 			inline static SwapChain* getSwapChain()  { return m_SwapChain; }
 			inline static Pipeline* getPipeline() { return m_Pipeline; }
 

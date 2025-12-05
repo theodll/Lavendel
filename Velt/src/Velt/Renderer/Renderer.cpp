@@ -123,7 +123,7 @@ namespace Velt {
 		void Renderer::loadModels()
 		{
 			VT_PROFILE_FUNCTION();
-			std::vector<Model::Veltex> vertices = {
+			std::vector<Model::Vertex> vertices = {
 				{{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
 				{{ -0.5f, 0.5f }, {0.0f, 1.0f, 0.0f}},
 				{{0.5f, 0.5f},  {0.0f, 0.0f, 1.0f}}

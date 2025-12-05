@@ -1,14 +1,13 @@
 #include "Framebuffer.h"
-#include "Velt/Plattform/Vulkan/VulkanFramebuffer.h"
+#include "Velt/Platform/Vulkan/VulkanFramebuffer.h"
 #include "Velt/Renderer/Renderer.h"
 #include "vtpch.h"
 
-namespace Velt {
-namespace RenderAPI {
+namespace Velt::Renderer {
 
-Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification &spec) {
-  return CreateRef<VulkanFramebuffer>(Renderer::getDevice(), spec);
+  Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification &spec) {
+    return CreateRef<VulkanFramebuffer>(Renderer::getDevice(), spec);
 }
 
-} // namespace RenderAPI
+
 } // namespace Velt

@@ -4,7 +4,7 @@
 namespace Velt {
     namespace RenderAPI {
 
-        SwapChain::SwapChain(GPUDevice& deviceRef, VkExtent2D windowExtent)
+        SwapChain::SwapChain(VulkanDevice& deviceRef, VkExtent2D windowExtent)
             : m_Device{ deviceRef }, windowExtent{ windowExtent }, m_OldSwapchain{ nullptr }
         {
             VT_PROFILE_FUNCTION();
@@ -12,7 +12,7 @@ namespace Velt {
             init();
         }
 
-        SwapChain::SwapChain(GPUDevice& deviceRef, VkExtent2D windowExtent, SwapChain* previous)
+        SwapChain::SwapChain(VulkanDevice& deviceRef, VkExtent2D windowExtent, SwapChain* previous)
             : m_Device{ deviceRef }, windowExtent{ windowExtent }, m_OldSwapchain{ previous }
         {
             VT_PROFILE_FUNCTION();

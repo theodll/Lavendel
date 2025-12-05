@@ -32,7 +32,7 @@ bool VulkanFramebuffer::IsDepthFormat(FramebufferTextureFormat format) {
   }
 }
 
-VulkanFramebuffer::VulkanFramebuffer(GPUDevice *device,
+VulkanFramebuffer::VulkanFramebuffer(VulkanDevice *device,
                                      const FramebufferSpecification &spec)
     : m_Device(device), m_Specification(spec),
       m_DepthAttachmentSpecification(FramebufferTextureFormat::None) {

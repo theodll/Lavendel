@@ -6,10 +6,10 @@
 	url = https://github.com/libsdl-org/SDL
 [submodule "Velt/vendor/glm"]
 	path = Velt/vendor/glm
-	url = https://www.github.com/g-truc/glm
+	url = https://github.com/g-truc/glm
 [submodule "Velt/vendor/volk"]
 	path = Velt/vendor/volk
-	url = https://www.github.com/zeux/volk
+	url = https://github.com/zeux/volk
 [submodule "Velt/vendor/ImGui"]
 	path = Velt/vendor/ImGui
 	url = https://github.com/ocornut/imgui

@@ -22,7 +22,7 @@ namespace Velt {
 			vkDestroyPipeline(m_Device.device(), graphicsPipeline, nullptr);
 		}
 
-		Pipeline::Pipeline(GPUDevice& device, const std::string& vertFilepath, const std::string& fragFilePath, const PipelineConfigInfo& configInfo) 
+		Pipeline::Pipeline(VulkanDevice& device, const std::string& vertFilepath, const std::string& fragFilePath, const PipelineConfigInfo& configInfo) 
 			: m_Device{ device }
 		{
 			VT_PROFILE_FUNCTION();
@@ -86,15 +86,15 @@ namespace Velt {
 			shaderStages[1].pNext = nullptr;
 			shaderStages[1].pSpecializationInfo = nullptr;
 
-			auto bindingDescriptions = Model::Veltex::getBindingDescription();
-			auto attributeDescriptions = Model::Veltex::getAttributeDescription();
-			VkPipelineVeltexInputStateCreateInfo vertexInputInfo{};
+			auto bindingDescriptions = Model::Vertex::getBindingDescription();
+			auto attributeDescriptions = Model::Vertex::getAttributeDescription();
+			VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 
 			vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 			vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
 			vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
-			vertexInputInfo.pVeltexAttributeDescriptions = attributeDescriptions.data();
-			vertexInputInfo.pVeltexBindingDescriptions = bindingDescriptions.data();
+			vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+			vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
 			
 			VkPipelineViewportStateCreateInfo viewportInfo{};
 
@@ -102,7 +102,7 @@ namespace Velt {
 			pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 			pipelineInfo.stageCount = 2;
 			pipelineInfo.pStages = shaderStages;
-			pipelineInfo.pVeltexInputState = &vertexInputInfo;
+			pipelineInfo.pVertexInputState = &vertexInputInfo;
 			// Pass through configInfo data to corresponding members
 			pipelineInfo.pInputAssemblyState = &configInfo.inputAssemblyInfo;
 			pipelineInfo.pViewportState = &configInfo.viewportInfo;
