@@ -14,12 +14,12 @@ typedef int64_t i64;
 
 #ifdef VT_PLATFORM_WINDOWS
 	#ifdef VT_BUILD_DLL
-		#define Velt_API __declspec(dllexport)
+		#define VELT_API __declspec(dllexport)
 	#else
-		#define Velt_API __declspec(dllimport)
+		#define VELT_API __declspec(dllimport)
 	#endif
 #else
-	#define Velt_API
+	#define VELT_API
 #endif
 
 

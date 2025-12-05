@@ -8,7 +8,7 @@ namespace Velt {
     namespace RenderAPI {
 
         // Forward declaration to break circular dependency
-        class LAVENDEL_API Window;
+        class VELT_API Window;
 
         struct SwapChainSupportDetails
         {
@@ -26,7 +26,7 @@ namespace Velt {
             bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
         };
 
-		class LAVENDEL_API VulkanDevice
+		class VELT_API VulkanDevice
         {
         public:
         #ifdef NDEBUG

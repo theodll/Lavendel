@@ -5,7 +5,7 @@ namespace Velt {
 	namespace RenderAPI {
 
 		// Forward declaration to break circular dependency
-		class LAVENDEL_API VulkanDevice;
+		class VELT_API VulkanDevice;
 
 		struct PipelineConfigInfo
 		{
@@ -23,7 +23,7 @@ namespace Velt {
 			uint32_t subpass = 0;
 		};
 
-		class LAVENDEL_API Pipeline
+		class VELT_API Pipeline
 		{
 		public:
 			Pipeline(VulkanDevice& device,

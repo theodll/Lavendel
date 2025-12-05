@@ -1,8 +1,9 @@
 #pragma once
+#include "Velt/Core/Core.h"
 
-
-class Pipeline
+class VELT_API Pipeline
 {
+public:
 
 };
 

@@ -19,6 +19,6 @@ namespace Velt::RenderAPI
 
 		static API GetAPI() { return s_API; }
 	private:
-		static API s_API; // Default to VULKAN
+		static API s_API;
 	};
 }

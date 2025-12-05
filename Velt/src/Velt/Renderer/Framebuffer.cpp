@@ -5,9 +5,8 @@
 
 namespace Velt::Renderer {
 
-  Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification &spec) {
-    return CreateRef<VulkanFramebuffer>(Renderer::getDevice(), spec);
-}
+    Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification& spec) {
+        return CreateRef<VulkanFramebuffer>(Renderer::getDevice(), spec);
 
-
+    };
 } // namespace Velt

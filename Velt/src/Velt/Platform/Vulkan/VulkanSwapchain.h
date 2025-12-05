@@ -5,7 +5,7 @@
 namespace Velt {
     namespace RenderAPI {
 
-        class LAVENDEL_API SwapChain
+        class VELT_API SwapChain
         {
         public:
             static constexpr int MAX_FRAMES_IN_FLIGHT = 3;

@@ -48,7 +48,7 @@ add_compile_definitions(
 
 # === SUBDIRECTORIES ===
 add_subdirectory(Velt)
-# add_subdirectory(Sandbox)
-add_subdirectory(Velt-Editor)
+add_subdirectory(Sandbox)
+add_subdirectory(VeltEditor)
 
 target_compile_definitions(Velt PRIVATE VT_BUILD_DLL)

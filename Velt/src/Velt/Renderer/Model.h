@@ -1,8 +1,9 @@
 #pragma once
+#include "Velt/Core/Core.h"
 
-
-class Model
+class VELT_API Model
 {
+public:
 
 };
 

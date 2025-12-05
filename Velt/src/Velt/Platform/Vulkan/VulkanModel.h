@@ -13,7 +13,7 @@ namespace  Velt
 {
     namespace RenderAPI
     {
-        class LAVENDEL_API Model
+        class VELT_API Model
         {
 
 

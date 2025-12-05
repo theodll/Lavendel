@@ -1,7 +1,7 @@
 #include "VulkanFramebuffer.h"
 #include <stdexcept>
 
-namespace Velt::RenderAPI {
+namespace Velt::Vulkan {
 
 VkFormat VulkanFramebuffer::FramebufferTextureFormatToVulkan(
     FramebufferTextureFormat format) {

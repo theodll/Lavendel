@@ -14,9 +14,9 @@ namespace Velt
 	class ImGuiLayer;
 	class LayerStack;
 
-	namespace RenderAPI
+	namespace Velt::Render
 	{
-		class LAVENDEL_API Renderer
+		class VELT_API Renderer
 		{
 		public:
 			Renderer(Window& window);

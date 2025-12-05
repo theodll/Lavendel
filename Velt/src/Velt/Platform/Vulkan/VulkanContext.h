@@ -1,9 +1,16 @@
 #pragma once
 #include "Velt/Core/Core.h"
 
-class LAVENDEL_API VulkanContext
+#pragma once
+#include "Velt/Renderer/RenderContext.h"
+
+namespace Velt::Vulkan
 {
 
-};
+	class VELT_API VulkanContext : public Renderer::RendererContext
+	{
+
+	};
+}
 
 

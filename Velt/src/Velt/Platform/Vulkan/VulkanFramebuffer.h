@@ -1,12 +1,13 @@
 #pragma once
 
-#include "Velt/Renderer/Core/Device.h"
+#include "Velt/Platform/Vulkan/VulkanDevice.h"
 #include "Velt/Renderer/Framebuffer.h"
+#include "Velt/Core/Core.h"
 #include <cassert>
 #include <vector>
 #include <vulkan/vulkan.h>
 
-namespace Velt::RenderAPI {
+namespace Velt::Vulkan {
 
 enum class FramebufferTextureFormat {
   None = 0,

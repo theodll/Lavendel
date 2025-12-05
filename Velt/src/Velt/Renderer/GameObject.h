@@ -1,7 +1,7 @@
 #pragma once
+#include "Velt/Core/Core.h"
 
-
-class GameObject
+class VELT_API GameObject
 {
 
 };

@@ -13,16 +13,16 @@ add_library(Velt SHARED
         "src/Velt/Events/MouseEvent.h"
         "src/Velt/Renderer/Window.cpp"
         "src/Velt/Renderer/Window.h"
-        "src/Velt/Renderer/Pipeline/Pipeline.h"
-        "src/Velt/Renderer/Pipeline/Pipeline.cpp"
-        "src/Velt/Renderer/Core/Device.cpp"
-        "src/Velt/Renderer/Core/Device.h"
-        "src/Velt/Renderer/Core/Swapchain.cpp"
-        "src/Velt/Renderer/Core/Swapchain.h"
+        "src/Velt/Platform/Vulkan/VulkanPipeline.h"
+        "src/Velt/Platform/Vulkan/VulkanPipeline.cpp"
+        "src/Velt/Platform/Vulkan/VulkanDevice.cpp"
+        "src/Velt/Platform/Vulkan/VulkanDevice.h"
+        "src/Velt/Platform/Vulkan/VulkanSwapchain.cpp"
+        "src/Velt/Platform/Vulkan/VulkanSwapchain.h"
         "src/Velt/Renderer/Renderer.h"
         "src/Velt/Renderer/Renderer.cpp"
-        "src/Velt/Renderer/Model/Model.cpp"
-        "src/Velt/Renderer/Model/Model.h"
+        "src/Velt/Platform/Vulkan/VulkanModel.cpp"
+        "src/Velt/Platform/Vulkan/VulkanModel.h"
         "src/vtpch.cpp"
         "src/vtpch.h"
         "src/Velt/Layers/Layer.cpp"
@@ -36,13 +36,13 @@ add_library(Velt SHARED
         "src/Velt/ImGui/Widgets/DemoWidget.h"
         "src/Velt/ImGui/Widgets/DemoWidget.cpp"
         "src/Velt/Utils/Profiling/Instrumentor.h"
-        "src/Velt/Renderer/Model/GameObject.cpp"
-        "src/Velt/Renderer/Model/GameObject.h"
+        "src/Velt/Platform/Vulkan/VulkanGameObject.cpp"
+        "src/Velt/Platform/Vulkan/VulkanGameObject.h"
         "src/Velt/Renderer/Framebuffer.h"
         "src/Velt/Renderer/Framebuffer.cpp"
-        "src/Velt/Plattform/Vulkan/VulkanFramebuffer.cpp"
-        "src/Velt/Plattform/Vulkan/VulkanFramebuffer.h"
- )
+        "src/Velt/Platform/Vulkan/VulkanFramebuffer.cpp"
+        "src/Velt/Platform/Vulkan/VulkanFramebuffer.h"
+  "src/Velt/Renderer/RenderContext.h" "src/Velt/Renderer/RenderContext.cpp" "src/Velt/Renderer/RendererAPI.h" "src/Velt/Renderer/GameObject.h" "src/Velt/Renderer/GameObject.cpp" "src/Velt/Renderer/Model.h" "src/Velt/Renderer/Model.cpp" "src/Velt/Renderer/Pipeline.h" "src/Velt/Renderer/Pipeline.cpp" "src/Velt/Platform/Vulkan/VulkanRenderPass.h" "src/Velt/Platform/Vulkan/VulkanRenderPass.cpp" "src/Velt/Renderer/RenderPass.cpp" "src/Velt/Renderer/RenderPass.h" "src/Velt/Platform/Vulkan/VulkanRenderer.h" "src/Velt/Platform/Vulkan/VulkanRenderer.cpp" "src/Velt/Platform/Vulkan/VulkanContext.h" "src/Velt/Renderer/RenderCommandBuffer.h" "src/Velt/Renderer/RenderCommandBuffer.cpp")
 
 if(WIN32 OR UNIX)
     set(SHADER_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders)
@@ -75,8 +75,8 @@ if(WIN32 OR UNIX)
     endforeach()
 
     add_dependencies(Velt CompileShaders)
-    target_compile_definitions(Velt PRIVATE VT_BUILD_DLL)
-    add_definitions(-DVT_BUILD_DLL)
+    target_compile_definitions(Velt PRIVATE VL_BUILD_DLL)
+    add_definitions(-DVL_BUILD_DLL)
 endif()
 
 add_subdirectory(vendor/spdlog)
@@ -100,9 +100,9 @@ target_include_directories(Velt PUBLIC
 )
 
 target_compile_definitions(Velt PRIVATE
-        $<$<CONFIG:Debug>:VT_DEBUG>
-        $<$<CONFIG:Release>:VT_RELEASE>
-        $<$<CONFIG:Dist>:VT_DIST>
+        $<$<CONFIG:Debug>:VL_DEBUG>
+        $<$<CONFIG:Release>:VL_RELEASE>
+        $<$<CONFIG:Dist>:VL_DIST>
 )
 
 target_include_directories(Velt
@@ -114,9 +114,9 @@ target_include_directories(Velt
         ${CMAKE_SOURCE_DIR}/Velt/src/Velt
 )
 
-target_precompile_headers(Velt PUBLIC ${CMAKE_SOURCE_DIR}/Velt/src/vtpch.h)
+target_precompile_headers(Velt PUBLIC ${CMAKE_SOURCE_DIR}/Velt/src/lvpch.h)
 
-message(STATUS "VT_BUILD_DLL is defined: ${VT_BUILD_DLL}")
+message(STATUS "VL_BUILD_DLL is defined: ${VL_BUILD_DLL}")
 get_target_property(COMPILE_DEFS Velt COMPILE_DEFINITIONS)
 message(STATUS "Velt compile definitions: ${COMPILE_DEFS}")
 

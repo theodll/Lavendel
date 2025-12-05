@@ -1,7 +1,7 @@
 #pragma once
 #include "Velt/Core/Core.h"
 
-namespace Velt::RenderAPI
+namespace Velt::Renderer
 {
 	class RendererContext
 	{
