@@ -10,8 +10,8 @@ namespace Lavendel {
         public:
             static constexpr int MAX_FRAMES_IN_FLIGHT = 3;
 
-            SwapChain(GPUDevice& deviceRef, VkExtent2D windowExtent);
-            SwapChain(GPUDevice& deviceRef, VkExtent2D windowExtent, SwapChain* previous);
+            SwapChain(VulkanDevice& deviceRef, VkExtent2D windowExtent);
+            SwapChain(VulkanDevice& deviceRef, VkExtent2D windowExtent, SwapChain* previous);
             ~SwapChain();
 
             SwapChain(const SwapChain&) = delete;
@@ -62,7 +62,7 @@ namespace Lavendel {
             std::vector<VkImage> swapChainImages;
             std::vector<VkImageView> swapChainImageViews;
 
-            GPUDevice& m_Device;
+            VulkanDevice& m_Device;
             VkExtent2D windowExtent;
 
             VkSwapchainKHR m_Swapchain;

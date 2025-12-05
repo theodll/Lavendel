@@ -1,5 +1,5 @@
 #include "Framebuffer.h"
-#include "Lavendel/Plattform/Vulkan/VulkanFramebuffer.h"
+#include "Lavendel/Platform/Vulkan/VulkanFramebuffer.h"
 #include "Lavendel/Renderer/Renderer.h"
 #include "lvpch.h"
 

@@ -22,7 +22,7 @@ namespace Lavendel {
 			vkDestroyPipeline(m_Device.device(), graphicsPipeline, nullptr);
 		}
 
-		Pipeline::Pipeline(GPUDevice& device, const std::string& vertFilepath, const std::string& fragFilePath, const PipelineConfigInfo& configInfo) 
+		Pipeline::Pipeline(VulkanDevice& device, const std::string& vertFilepath, const std::string& fragFilePath, const PipelineConfigInfo& configInfo) 
 			: m_Device{ device }
 		{
 			LV_PROFILE_FUNCTION();

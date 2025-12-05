@@ -29,7 +29,7 @@ struct FramebufferTextureSpecification {
 
 class LAVENDEL_API VulkanFramebuffer : public Framebuffer {
 public:
-  VulkanFramebuffer(GPUDevice *device, const FramebufferSpecification &spec);
+  VulkanFramebuffer(VulkanDevice *device, const FramebufferSpecification &spec);
 
   virtual ~VulkanFramebuffer();
 
@@ -81,7 +81,7 @@ private:
   static bool IsDepthFormat(FramebufferTextureFormat format);
 
 private:
-  GPUDevice *m_Device = VK_NULL_HANDLE;
+  VulkanDevice *m_Device = VK_NULL_HANDLE;
 
   FramebufferSpecification m_Specification;
 

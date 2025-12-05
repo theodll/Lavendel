@@ -4,7 +4,7 @@
 namespace Lavendel {
     namespace RenderAPI {
 
-        SwapChain::SwapChain(GPUDevice& deviceRef, VkExtent2D windowExtent)
+        SwapChain::SwapChain(VulkanDevice& deviceRef, VkExtent2D windowExtent)
             : m_Device{ deviceRef }, windowExtent{ windowExtent }, m_OldSwapchain{ nullptr }
         {
             LV_PROFILE_FUNCTION();
@@ -12,7 +12,7 @@ namespace Lavendel {
             init();
         }
 
-        SwapChain::SwapChain(GPUDevice& deviceRef, VkExtent2D windowExtent, SwapChain* previous)
+        SwapChain::SwapChain(VulkanDevice& deviceRef, VkExtent2D windowExtent, SwapChain* previous)
             : m_Device{ deviceRef }, windowExtent{ windowExtent }, m_OldSwapchain{ previous }
         {
             LV_PROFILE_FUNCTION();

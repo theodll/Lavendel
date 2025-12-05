@@ -5,7 +5,7 @@ namespace Lavendel
 {
     namespace RenderAPI
     {
-		Model::Model(GPUDevice& device, const std::vector<Model::Vertex>& vertices) : m_Device{ device }
+		Model::Model(VulkanDevice& device, const std::vector<Model::Vertex>& vertices) : m_Device{ device }
         {
             LV_PROFILE_FUNCTION();
             LV_CORE_INFO("Creating Model...");

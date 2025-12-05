@@ -28,7 +28,7 @@ namespace  Lavendel
                 static std::vector<VkVertexInputAttributeDescription> getAttributeDescription();
             };
 
-            Model(GPUDevice &device, const std::vector<Model::Vertex> &vertices);
+            Model(VulkanDevice &device, const std::vector<Model::Vertex> &vertices);
             ~Model();
 
             Model(const Model &) = delete;
@@ -41,7 +41,7 @@ namespace  Lavendel
             void createVertexBuffers(const std::vector<Vertex> &vertices);
 
 
-            GPUDevice &m_Device;
+            VulkanDevice &m_Device;
             VkBuffer m_VertexBuffer;
             VkDeviceMemory m_VertexBufferMemory;
             uint32_t m_VertexCount;

@@ -5,7 +5,7 @@ namespace Lavendel {
 	namespace RenderAPI {
 
 		// Forward declaration to break circular dependency
-		class LAVENDEL_API GPUDevice;
+		class LAVENDEL_API VulkanDevice;
 
 		struct PipelineConfigInfo
 		{
@@ -26,7 +26,7 @@ namespace Lavendel {
 		class LAVENDEL_API Pipeline
 		{
 		public:
-			Pipeline(GPUDevice& device,
+			Pipeline(VulkanDevice& device,
 					 const std::string& vertFilepath,
 					 const std::string& fragFilePath,
 					 const PipelineConfigInfo& configInfo);
@@ -48,8 +48,8 @@ namespace Lavendel {
 
 			void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);
 
-			// Member variable for GPUDevice reference
-			GPUDevice& m_Device;
+			// Member variable for VulkanDevice reference
+			VulkanDevice& m_Device;
 
 			VkPipeline graphicsPipeline;
 			VkShaderModule vertShaderModule;

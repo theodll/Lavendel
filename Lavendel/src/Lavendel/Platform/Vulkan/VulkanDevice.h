@@ -26,7 +26,7 @@ namespace Lavendel {
             bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
         };
 
-		class LAVENDEL_API GPUDevice
+		class LAVENDEL_API VulkanDevice
         {
         public:
         #ifdef NDEBUG
@@ -35,14 +35,14 @@ namespace Lavendel {
             const bool enableValidationLayers = true;
         #endif
 
-            GPUDevice(Window& window);
-            ~GPUDevice();
+            VulkanDevice(Window& window);
+            ~VulkanDevice();
 
             // Not copyable or movable
-            GPUDevice(const GPUDevice&) = delete;
-            void operator=(const GPUDevice&) = delete;
-            GPUDevice(GPUDevice&&) = delete;
-            GPUDevice& operator=(GPUDevice&&) = delete;
+            VulkanDevice(const VulkanDevice&) = delete;
+            void operator=(const VulkanDevice&) = delete;
+            VulkanDevice(VulkanDevice&&) = delete;
+            VulkanDevice& operator=(VulkanDevice&&) = delete;
 
             VkCommandPool getCommandPool() { return m_CommandPool; }
             VkDevice device() { return m_Device; }
