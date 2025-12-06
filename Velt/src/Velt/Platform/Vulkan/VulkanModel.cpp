@@ -1,10 +1,8 @@
 #include "vtpch.h"
-#include "Model.h"
+#include "VulkanModel.h"
 
-namespace Velt
+namespace Velt::Renderer::Vulkan
 {
-    namespace RenderAPI
-    {
 		Model::Model(VulkanDevice& device, const std::vector<Model::Vertex>& vertices) : m_Device{ device }
         {
             VT_PROFILE_FUNCTION();
@@ -86,6 +84,4 @@ namespace Velt
 
             return attributeDescriptions;
         }
-        
-    }
 }

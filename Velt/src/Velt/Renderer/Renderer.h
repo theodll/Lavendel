@@ -7,7 +7,7 @@
 #include "Model/Model.h"
 
 
-namespace Velt
+namespace Velt::Renderer
 {
 	// Forward declaration
 	class Application;

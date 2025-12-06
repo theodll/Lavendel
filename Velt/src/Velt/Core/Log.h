@@ -12,7 +12,7 @@
 
 namespace Velt {
 
-    class Velt_API Log
+    class VELT_API Log
     {
 
     public:
@@ -42,7 +42,7 @@ namespace Velt {
 // Client log macros with null checks
 #define VT_TRACE(...)	      if(::Velt::Log::GetClientLogger()) ::Velt::Log::GetClientLogger()->trace(__VA_ARGS__)
 #define VT_INFO(...)	      if(::Velt::Log::GetClientLogger()) ::Velt::Log::GetClientLogger()->info(__VA_ARGS__)
-#define vt_WARN(...)	      if(::Velt::Log::GetClientLogger()) ::Velt::Log::GetClientLogger()->warn(__VA_ARGS__)
-#define vt_ERROR(...)	      if(::Velt::Log::GetClientLogger()) ::Velt::Log::GetClientLogger()->error(__VA_ARGS__)
-#define vt_FATAL(...)	      if(::Velt::Log::GetClientLogger()) ::Velt::Log::GetClientLogger()->critical(__VA_ARGS__)
-#define vt_ASSERT(...).       if(::Velt::Log::GetClientLogger()) ::Velt::Log::GetClientLogger()->assert(__VA_ARGS__)
+#define VT_WARN(...)	      if(::Velt::Log::GetClientLogger()) ::Velt::Log::GetClientLogger()->warn(__VA_ARGS__)
+#define VT_ERROR(...)	      if(::Velt::Log::GetClientLogger()) ::Velt::Log::GetClientLogger()->error(__VA_ARGS__)
+#define VT_FATAL(...)	      if(::Velt::Log::GetClientLogger()) ::Velt::Log::GetClientLogger()->critical(__VA_ARGS__)
+#define VT_ASSERT(...).       if(::Velt::Log::GetClientLogger()) ::Velt::Log::GetClientLogger()->assert(__VA_ARGS__)

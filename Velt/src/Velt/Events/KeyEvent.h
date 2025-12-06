@@ -6,7 +6,7 @@
 
 namespace Velt
 {
-	class Velt_API KeyEvent : public Event
+	class VELT_API KeyEvent : public Event
 	{
 	public: 
 		inline int GetKeyCode() const { return m_KeyCode; }
@@ -18,7 +18,7 @@ namespace Velt
 		int m_KeyCode;
 	};
 
-	class Velt_API KeyPressedEvent : public KeyEvent
+	class VELT_API KeyPressedEvent : public KeyEvent
 	{
 	public: 
 		KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
@@ -36,7 +36,7 @@ namespace Velt
 		int m_RepeatCount;
 	};
 
-	class Velt_API KeyReleasedEvent : public KeyEvent
+	class VELT_API KeyReleasedEvent : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}

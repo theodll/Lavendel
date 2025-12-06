@@ -4,7 +4,7 @@
 
 namespace Velt
 {
-    class Velt_API LayerStack {
+    class VELT_API LayerStack {
     public:
         LayerStack();
         ~LayerStack();

@@ -3,6 +3,7 @@
 
 class VELT_API GameObject
 {
+public:
 
 };
 

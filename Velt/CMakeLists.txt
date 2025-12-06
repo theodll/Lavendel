@@ -42,7 +42,7 @@ add_library(Velt SHARED
         "src/Velt/Renderer/Framebuffer.cpp"
         "src/Velt/Platform/Vulkan/VulkanFramebuffer.cpp"
         "src/Velt/Platform/Vulkan/VulkanFramebuffer.h"
-  "src/Velt/Renderer/RenderContext.h" "src/Velt/Renderer/RenderContext.cpp" "src/Velt/Renderer/RendererAPI.h" "src/Velt/Renderer/GameObject.h" "src/Velt/Renderer/GameObject.cpp" "src/Velt/Renderer/Model.h" "src/Velt/Renderer/Model.cpp" "src/Velt/Renderer/Pipeline.h" "src/Velt/Renderer/Pipeline.cpp" "src/Velt/Platform/Vulkan/VulkanRenderPass.h" "src/Velt/Platform/Vulkan/VulkanRenderPass.cpp" "src/Velt/Renderer/RenderPass.cpp" "src/Velt/Renderer/RenderPass.h" "src/Velt/Platform/Vulkan/VulkanRenderer.h" "src/Velt/Platform/Vulkan/VulkanRenderer.cpp" "src/Velt/Platform/Vulkan/VulkanContext.h" "src/Velt/Renderer/RenderCommandBuffer.h" "src/Velt/Renderer/RenderCommandBuffer.cpp")
+  "src/Velt/Renderer/RenderContext.h" "src/Velt/Renderer/RenderContext.cpp" "src/Velt/Renderer/RendererAPI.h" "src/Velt/Renderer/GameObject.h" "src/Velt/Renderer/GameObject.cpp" "src/Velt/Renderer/Model.h" "src/Velt/Renderer/Model.cpp" "src/Velt/Renderer/Pipeline.h" "src/Velt/Renderer/Pipeline.cpp" "src/Velt/Platform/Vulkan/VulkanRenderPass.h" "src/Velt/Platform/Vulkan/VulkanRenderPass.cpp" "src/Velt/Renderer/RenderPass.cpp" "src/Velt/Renderer/RenderPass.h" "src/Velt/Platform/Vulkan/VulkanRenderer.h" "src/Velt/Platform/Vulkan/VulkanRenderer.cpp" "src/Velt/Platform/Vulkan/VulkanContext.h" "src/Velt/Renderer/RenderCommandBuffer.h" "src/Velt/Renderer/RenderCommandBuffer.cpp" "Velt.h")
 
 if(WIN32 OR UNIX)
     set(SHADER_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders)

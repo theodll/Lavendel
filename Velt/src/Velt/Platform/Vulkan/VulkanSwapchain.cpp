@@ -1,10 +1,9 @@
 #include "vtpch.h"
-#include "Swapchain.h"
+#include "VulkanSwapchain.h"
 
-namespace Velt {
-    namespace RenderAPI {
+namespace Velt::Renderer::Vulkan {
 
-        SwapChain::SwapChain(VulkanDevice& deviceRef, VkExtent2D windowExtent)
+        VulkanSwapchain::VulkanSwapchain(VulkanDevice& deviceRef, VkExtent2D windowExtent)
             : m_Device{ deviceRef }, windowExtent{ windowExtent }, m_OldSwapchain{ nullptr }
         {
             VT_PROFILE_FUNCTION();
@@ -12,19 +11,19 @@ namespace Velt {
             init();
         }
 
-        SwapChain::SwapChain(VulkanDevice& deviceRef, VkExtent2D windowExtent, SwapChain* previous)
+        VulkanSwapchain::VulkanSwapchain(VulkanDevice& deviceRef, VkExtent2D windowExtent, VulkanSwapchain* previous)
             : m_Device{ deviceRef }, windowExtent{ windowExtent }, m_OldSwapchain{ previous }
         {
             VT_PROFILE_FUNCTION();
-            VT_CORE_INFO("Creating Swapchain with old SwapChain...");
+            VT_CORE_INFO("Creating Swapchain with old VulkanSwapchain...");
             init();
 			m_OldSwapchain = nullptr;
         }
 
-        void SwapChain::init()
+        void VulkanSwapchain::init()
         {
             VT_PROFILE_FUNCTION();
-            createSwapChain();
+            createVulkanSwapchain();
             createImageViews();
             createRenderPass();
             createDepthResources();
@@ -32,7 +31,7 @@ namespace Velt {
             createSyncObjects();
         }
 
-        SwapChain::~SwapChain()
+        VulkanSwapchain::~VulkanSwapchain()
         {
             VT_PROFILE_FUNCTION();
 
@@ -82,7 +81,7 @@ namespace Velt {
             }
         }
 
-        VkResult SwapChain::acquireNextImage(uint32_t &imageIndex)
+        VkResult VulkanSwapchain::acquireNextImage(uint32_t &imageIndex)
         {
             VT_PROFILE_FUNCTION();
             vkWaitForFences(
@@ -105,7 +104,7 @@ namespace Velt {
         }
 
 
-        VkResult SwapChain::submitCommandBuffers(
+        VkResult VulkanSwapchain::submitCommandBuffers(
             const VkCommandBuffer* buffers, uint32_t* imageIndex)
         {
             VT_PROFILE_FUNCTION();
@@ -156,10 +155,10 @@ namespace Velt {
             return result;
         }
 
-        void SwapChain::createSwapChain()
+        void VulkanSwapchain::createVulkanSwapchain()
         {
             VT_PROFILE_FUNCTION();
-            SwapChainSupportDetails swapChainSupport = m_Device.getSwapChainSupport();
+            VulkanSwapchainSupportDetails swapChainSupport = m_Device.getVulkanSwapchainSupport();
 
             VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
             VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
@@ -220,7 +219,7 @@ namespace Velt {
             swapChainExtent = extent;
         }
 
-        void SwapChain::createImageViews()
+        void VulkanSwapchain::createImageViews()
         {
             VT_PROFILE_FUNCTION();
             swapChainImageViews.resize(swapChainImages.size());
@@ -245,7 +244,7 @@ namespace Velt {
             }
         }
 
-        void SwapChain::createRenderPass()
+        void VulkanSwapchain::createRenderPass()
         {
             VT_PROFILE_FUNCTION();
             VkAttachmentDescription depthAttachment{};
@@ -263,7 +262,7 @@ namespace Velt {
             depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
             VkAttachmentDescription colorAttachment = {};
-            colorAttachment.format = getSwapChainImageFormat();
+            colorAttachment.format = getVulkanSwapchainImageFormat();
             colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
             colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
             colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -309,7 +308,7 @@ namespace Velt {
             }
         }
 
-        void SwapChain::createFramebuffers()
+        void VulkanSwapchain::createFramebuffers()
         {
             VT_PROFILE_FUNCTION();
             swapChainFramebuffers.resize(imageCount());
@@ -317,7 +316,7 @@ namespace Velt {
             {
                 std::array<VkImageView, 2> attachments = { swapChainImageViews[i], depthImageViews[i] };
 
-                VkExtent2D swapChainExtent = getSwapChainExtent();
+                VkExtent2D swapChainExtent = getVulkanSwapchainExtent();
                 VkFramebufferCreateInfo framebufferInfo = {};
                 framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
                 framebufferInfo.renderPass = renderPass;
@@ -338,11 +337,11 @@ namespace Velt {
             }
         }
 
-        void SwapChain::createDepthResources()
+        void VulkanSwapchain::createDepthResources()
         {
             VT_PROFILE_FUNCTION();
             VkFormat depthFormat = findDepthFormat();
-            VkExtent2D swapChainExtent = getSwapChainExtent();
+            VkExtent2D swapChainExtent = getVulkanSwapchainExtent();
 
             depthImages.resize(imageCount());
             depthImageMemorys.resize(imageCount());
@@ -390,7 +389,7 @@ namespace Velt {
             }
         }
 
-        void SwapChain::createSyncObjects()
+        void VulkanSwapchain::createSyncObjects()
         {
             VT_PROFILE_FUNCTION();
             // Create one semaphore pair per frame in flight
@@ -420,7 +419,7 @@ namespace Velt {
             }
         }
 
-        VkSurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat(
+        VkSurfaceFormatKHR VulkanSwapchain::chooseSwapSurfaceFormat(
             const std::vector<VkSurfaceFormatKHR>& availableFormats)
         {
             VT_PROFILE_FUNCTION();
@@ -436,7 +435,7 @@ namespace Velt {
             return availableFormats[0];
         }
 
-        VkPresentModeKHR SwapChain::chooseSwapPresentMode(
+        VkPresentModeKHR VulkanSwapchain::chooseSwapPresentMode(
             const std::vector<VkPresentModeKHR>& availablePresentModes)
         {
             VT_PROFILE_FUNCTION();
@@ -453,7 +452,7 @@ namespace Velt {
             return VK_PRESENT_MODE_FIFO_KHR;
         }
 
-        VkExtent2D SwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
+        VkExtent2D VulkanSwapchain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
         {
             VT_PROFILE_FUNCTION();
             if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
@@ -474,7 +473,7 @@ namespace Velt {
             }
         }
 
-        VkFormat SwapChain::findDepthFormat()
+        VkFormat VulkanSwapchain::findDepthFormat()
         {
             VT_PROFILE_FUNCTION();
             return m_Device.findSupportedFormat(
@@ -482,5 +481,4 @@ namespace Velt {
                 VK_IMAGE_TILING_OPTIMAL,
                 VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
         }
-    }
 }

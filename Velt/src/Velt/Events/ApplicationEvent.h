@@ -6,7 +6,7 @@
 #include "sstream"
 
 namespace Velt {
-	class Velt_API WindowResizeEvent : public Event
+	class VELT_API WindowResizeEvent : public Event
 	{
 
 		public:
@@ -31,7 +31,7 @@ namespace Velt {
 
 	};
 
-	class Velt_API WindowCloseEvent : public Event
+	class VELT_API WindowCloseEvent : public Event
 	{
 		public:
 			WindowCloseEvent() {};
@@ -40,7 +40,7 @@ namespace Velt {
 			EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	};
 
-	class Velt_API AppTickEvent : public Event
+	class VELT_API AppTickEvent : public Event
 	{
 		public:
 			AppTickEvent() {};
@@ -49,7 +49,7 @@ namespace Velt {
 			EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	};
 
-	class Velt_API AppUpdateEvent : public Event
+	class VELT_API AppUpdateEvent : public Event
 	{
 		public:
 			AppUpdateEvent() {};
@@ -58,7 +58,7 @@ namespace Velt {
 			EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	};
 
-	class Velt_API AppRenderEvent : public Event
+	class VELT_API AppRenderEvent : public Event
 	{
 		public:
 			AppRenderEvent() {};

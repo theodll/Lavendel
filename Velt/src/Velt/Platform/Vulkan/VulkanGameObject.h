@@ -4,7 +4,7 @@
 #include "Model.h"
 
 
-namespace Velt
+namespace Velt::Renderer::Vulkan
 {
 	struct TransformComponent
 	{
@@ -31,7 +31,7 @@ namespace Velt
 
 		uint32_t getID() const { return id; }
 
-		std::shared_ptr<RenderAPI::Model> model;
+		std::shared_ptr<Renderer::Vulkan::Model> model;
 		glm::vec3 color; 
 
 	private:

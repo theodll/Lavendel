@@ -4,9 +4,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
 
-namespace Velt {
-
-    namespace RenderAPI {
+namespace Velt::Vulkan {
 
         static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
             VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -668,7 +666,6 @@ namespace Velt {
             }
         }
 
-        
-	}   // namespace RendererAPI
+        // namespace RendererAPI
 
 }  // namespace Velt

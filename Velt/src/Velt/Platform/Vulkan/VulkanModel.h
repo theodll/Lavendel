@@ -4,15 +4,13 @@
 
 
 #include "vtpch.h"
-#include "../Core/Device.h"
+#include "VulkanDevice.h"
 
 
 
 
-namespace  Velt
+namespace  Velt::Renderer::Vulkan
 {
-    namespace RenderAPI
-    {
         class VELT_API Model
         {
 
@@ -46,6 +44,6 @@ namespace  Velt
             VkDeviceMemory m_VertexBufferMemory;
             uint32_t m_VertexCount;
         };
-    }
-}
+  }
+
 

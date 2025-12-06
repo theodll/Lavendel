@@ -4,7 +4,7 @@
 #include <string>
 
 namespace Velt {
-	class Velt_API DemoWidget {
+	class VELT_API DemoWidget {
 	public:
 		DemoWidget(const std::string& name = "Demo Widget");
 		~DemoWidget() = default;

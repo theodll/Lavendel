@@ -34,7 +34,7 @@ struct InstrumentationSession
     std::string Name;
 };
 
-class Velt_API Instrumentor
+class VELT_API Instrumentor
 {
 private:
     InstrumentationSession* m_CurrentSession;

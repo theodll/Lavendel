@@ -4,7 +4,7 @@
 
 namespace Velt
 {
-    class Velt_API Layer {
+    class VELT_API Layer {
     public:
         Layer(const std::string& debugName = "Layer" );
         virtual ~Layer();

@@ -4,8 +4,7 @@
 #include "Velt/Core/Core.h"
 #include "Velt/Renderer/Window.h"
 
-namespace Velt {
-    namespace RenderAPI {
+namespace Velt::Renderer::Vulkan {
 
         // Forward declaration to break circular dependency
         class VELT_API Window;
@@ -123,6 +122,4 @@ namespace Velt {
 		        const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
             #endif
         };
-	}   // namespace RendererAPI
-
 }  // namespace Velt

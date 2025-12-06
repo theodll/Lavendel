@@ -7,7 +7,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-namespace Velt::Vulkan {
+namespace Velt::Renderer::Vulkan {
 
 enum class FramebufferTextureFormat {
   None = 0,
@@ -28,7 +28,7 @@ struct FramebufferTextureSpecification {
       : TextureFormat(format) {}
 };
 
-class LAVENDEL_API VulkanFramebuffer : public Framebuffer {
+class VELT_API VulkanFramebuffer : public Renderer::Framebuffer {
 public:
   VulkanFramebuffer(VulkanDevice *device, const FramebufferSpecification &spec);
 

@@ -12,7 +12,7 @@ namespace Velt
 		class Renderer;
 	}
 		
-	class Velt_API Application
+	class VELT_API Application
 	{
 		public:
 			Application();

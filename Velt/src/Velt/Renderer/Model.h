@@ -1,10 +1,14 @@
 #pragma once
 #include "Velt/Core/Core.h"
 
-class VELT_API Model
+namespace Velt::Renderer
 {
-public:
 
-};
+	class VELT_API Model
+	{
+	public:
 
+	};
+
+}
 

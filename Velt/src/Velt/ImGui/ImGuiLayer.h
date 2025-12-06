@@ -12,7 +12,7 @@ struct SDL_Window;
 union SDL_Event;
 
 namespace Velt {
-	class Velt_API ImGuiLayer : public Layer
+	class VELT_API ImGuiLayer : public Layer
 	{
 	public:
 		ImGuiLayer();

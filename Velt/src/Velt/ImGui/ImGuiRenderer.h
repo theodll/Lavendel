@@ -18,7 +18,7 @@ struct VkRenderPass_T;
 struct VkFramebuffer_T;
 
 namespace Velt {
-	class Velt_API ImGuiRenderer {
+	class VELT_API ImGuiRenderer {
 	public:
 		ImGuiRenderer(RenderAPI::SwapChain* swapchain, RenderAPI::GPUDevice* device, SDL_Window* window);
 		~ImGuiRenderer() = default;

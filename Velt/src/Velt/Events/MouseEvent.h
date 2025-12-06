@@ -5,7 +5,7 @@
 
 namespace Velt
 {
-    class Velt_API MouseMovedEvent : public Event
+    class VELT_API MouseMovedEvent : public Event
     {
     public:
         MouseMovedEvent(float x, float y) : m_MouseX(x), m_MouseY(y) {}
@@ -24,7 +24,7 @@ namespace Velt
         float m_MouseX, m_MouseY;
     };
 
-    class Velt_API MouseScrolledEvent : public Event
+    class VELT_API MouseScrolledEvent : public Event
     {
     public:
         MouseScrolledEvent(float OffsetX, float OffsetY) : m_OffsetX(OffsetX), m_OffsetY(OffsetY) {};
@@ -45,7 +45,7 @@ namespace Velt
         float m_OffsetX, m_OffsetY;
     };
 
-    class Velt_API MouseButtonEvent : public Event
+    class VELT_API MouseButtonEvent : public Event
     {
         inline int GetMouseButton() const { return m_Button; }
 
@@ -56,7 +56,7 @@ namespace Velt
         int m_Button;
     };
 
-    class Velt_API MouseButtonPressedEvent : public MouseButtonEvent
+    class VELT_API MouseButtonPressedEvent : public MouseButtonEvent
     {
     public:
         MouseButtonPressedEvent(int button) : m_Button(button) {};
@@ -73,7 +73,7 @@ namespace Velt
         int m_Button;
     };
 
-    class Velt_API MouseButtonReleasedEvent : public MouseButtonEvent
+    class VELT_API MouseButtonReleasedEvent : public MouseButtonEvent
     {
     public:
         MouseButtonReleasedEvent(int button) : m_Button(button) {}

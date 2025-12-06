@@ -1,13 +1,12 @@
 #pragma once
 #include "vtpch.h"
 
-namespace Velt {
-	namespace RenderAPI {
+namespace Velt::Renderer::Vulkan 
+{
 
-		// Forward declaration to break circular dependency
 		class VELT_API VulkanDevice;
 
-		struct PipelineConfigInfo
+		struct VulkanPipelineConfigInfo
 		{
 			VkPipelineViewportStateCreateInfo viewportInfo;
 			VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
@@ -23,37 +22,36 @@ namespace Velt {
 			uint32_t subpass = 0;
 		};
 
-		class VELT_API Pipeline
+		class VELT_API VulkanPipeline
 		{
 		public:
-			Pipeline(VulkanDevice& device,
+			VulkanPipeline(VulkanDevice& device,
 					 const std::string& vertFilepath,
 					 const std::string& fragFilePath,
-					 const PipelineConfigInfo& configInfo);
+					 const VulkanPipelineConfigInfo& configInfo);
 
-			~Pipeline();
+			~VulkanPipeline();
 
-			Pipeline(const Pipeline&) = delete;
-			void operator=(const Pipeline&) = delete;
+			VulkanPipeline(const VulkanPipeline&) = delete;
+			void operator=(const VulkanPipeline&) = delete;
 
 			void bind(VkCommandBuffer commandBuffer);
 
-			static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
+			static void defaultVulkanPipelineConfigInfo(VulkanPipelineConfigInfo& configInfo);
 
 		private:
 			static std::vector<char> readFile(const std::string& filepath);
-			void createGraphicsPipeline(const std::string& vertShaderPath,
+			void createGraphicsVulkanPipeline(const std::string& vertShaderPath,
 										const std::string& fragShaderPath,
-										const PipelineConfigInfo& configInfo);
+										const VulkanPipelineConfigInfo& configInfo);
 
 			void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);
 
 			// Member variable for VulkanDevice reference
 			VulkanDevice& m_Device;
 
-			VkPipeline graphicsPipeline;
+			VkPipeline graphicsVulkanPipeline;
 			VkShaderModule vertShaderModule;
 			VkShaderModule fragShaderModule;
 		};
-	}
 }

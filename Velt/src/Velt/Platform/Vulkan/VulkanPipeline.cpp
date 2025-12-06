@@ -1,17 +1,16 @@
 #include "vtpch.h"
 
-#include "Pipeline.h"
-#include "../Core/Device.h"
-#include "../Model/Model.h"
+#include "VulkanPipeline.h"
+#include "VulkanDevice.h"
+#include "VulkanModel.h"
 
 
 
 
 
-namespace Velt {
-	namespace RenderAPI {
+namespace Velt::Renderer::Vulkan {
 
-		Pipeline::~Pipeline()
+		VulkanPipeline::~VulkanPipeline()
 		{
 			VT_PROFILE_FUNCTION();
 
@@ -19,24 +18,24 @@ namespace Velt {
 
 			vkDestroyShaderModule(m_Device.device(), fragShaderModule, nullptr);
 			vkDestroyShaderModule(m_Device.device(), vertShaderModule, nullptr);
-			vkDestroyPipeline(m_Device.device(), graphicsPipeline, nullptr);
+			vkDestroyPipeline(m_Device.device(), graphicsVulkanPipeline, nullptr);
 		}
 
-		Pipeline::Pipeline(VulkanDevice& device, const std::string& vertFilepath, const std::string& fragFilePath, const PipelineConfigInfo& configInfo) 
+		VulkanPipeline::VulkanPipeline(VulkanDevice& device, const std::string& vertFilepath, const std::string& fragFilePath, const VulkanPipelineConfigInfo& configInfo) 
 			: m_Device{ device }
 		{
 			VT_PROFILE_FUNCTION();
-			VT_CORE_INFO("Creating Pipeline...");
-			createGraphicsPipeline(vertFilepath, fragFilePath, configInfo);
+			VT_CORE_INFO("Creating VulkanPipeline...");
+			createGraphicsVulkanPipeline(vertFilepath, fragFilePath, configInfo);
 		}
 
-		void Pipeline::bind(VkCommandBuffer commandBuffer)
+		void VulkanPipeline::bind(VkCommandBuffer commandBuffer)
 		{
 			VT_PROFILE_FUNCTION();
-			vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+			vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsVulkanPipeline);
 		}
 
-		std::vector<char> Pipeline::readFile(const std::string& filepath)
+		std::vector<char> VulkanPipeline::readFile(const std::string& filepath)
 		{
 			VT_PROFILE_FUNCTION();
 			auto file = std::ifstream(filepath, std::ios::ate | std::ios::binary);
@@ -57,7 +56,7 @@ namespace Velt {
 			return buffer;
 		}
 
-		void Pipeline::createGraphicsPipeline(const std::string& vertShaderPath, const std::string& fragShaderPath, const PipelineConfigInfo& configInfo)
+		void VulkanPipeline::createGraphicsVulkanPipeline(const std::string& vertShaderPath, const std::string& fragShaderPath, const VulkanPipelineConfigInfo& configInfo)
 		{
 			VT_PROFILE_FUNCTION();
 			auto vertCode = readFile(vertShaderPath);
@@ -119,14 +118,14 @@ namespace Velt {
 			pipelineInfo.basePipelineIndex = -1; // Optional
 			pipelineInfo.basePipelineHandle = nullptr; // Optional
 
-			if (vkCreateGraphicsPipelines(m_Device.device(), nullptr, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) 
+			if (vkCreateGraphicsPipelines(m_Device.device(), nullptr, 1, &pipelineInfo, nullptr, &graphicsVulkanPipeline) != VK_SUCCESS) 
 			{
 				VT_CORE_ERROR("Failed to create graphics pipeline!");
 				throw std::runtime_error("failed to create graphics pipeline!");
 			}
 		}
 
-		void Pipeline::createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule) 
+		void VulkanPipeline::createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule) 
 		{
 			VT_PROFILE_FUNCTION();
 			VkShaderModuleCreateInfo createInfo{};
@@ -141,7 +140,7 @@ namespace Velt {
 			}
 		}
 
-		void Pipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo)
+		void VulkanPipeline::defaultVulkanPipelineConfigInfo(VulkanPipelineConfigInfo& configInfo)
 		{
 			VT_PROFILE_FUNCTION();
 			// Input Assembly
@@ -228,5 +227,4 @@ namespace Velt {
 
 		}
 
-	}
 }

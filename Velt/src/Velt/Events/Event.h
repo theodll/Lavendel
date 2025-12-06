@@ -38,7 +38,7 @@ namespace Velt {
 	};
 
 
-	class Velt_API Event
+	class VELT_API Event
 	{
 		friend class EventDispatcher;
 	public: 
@@ -58,7 +58,7 @@ namespace Velt {
 	};
 	
 
-	class Velt_API EventDispatcher
+	class VELT_API EventDispatcher
 	{
 		template<typename T>
 		using EventFn = std::function<bool(T&)>;

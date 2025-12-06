@@ -1,28 +1,27 @@
 #pragma once
 #include "vtpch.h"
-#include "Device.h"
+#include "VulkanDevice.h"
 
-namespace Velt {
-    namespace RenderAPI {
+namespace Velt::Renderer::Vulkan {
 
-        class VELT_API SwapChain
+        class VELT_API VulkanSwapchain
         {
         public:
             static constexpr int MAX_FRAMES_IN_FLIGHT = 3;
 
-            SwapChain(VulkanDevice& deviceRef, VkExtent2D windowExtent);
-            SwapChain(VulkanDevice& deviceRef, VkExtent2D windowExtent, SwapChain* previous);
-            ~SwapChain();
+            VulkanSwapchain(VulkanDevice& deviceRef, VkExtent2D windowExtent);
+            VulkanSwapchain(VulkanDevice& deviceRef, VkExtent2D windowExtent, VulkanSwapchain* previous);
+            ~VulkanSwapchain();
 
-            SwapChain(const SwapChain&) = delete;
-            void operator=(const SwapChain&) = delete;
+            VulkanSwapchain(const VulkanSwapchain&) = delete;
+            void operator=(const VulkanSwapchain&) = delete;
 
             VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
             VkRenderPass getRenderPass() { return renderPass; }
             VkImageView getImageView(int index) { return swapChainImageViews[index]; }
             size_t imageCount() { return swapChainImages.size(); }
-            VkFormat getSwapChainImageFormat() { return swapChainImageFormat; }
-            VkExtent2D getSwapChainExtent() { return swapChainExtent; }
+            VkFormat getVulkanSwapchainImageFormat() { return swapChainImageFormat; }
+            VkExtent2D getVulkanSwapchainExtent() { return swapChainExtent; }
             uint32_t width() { return swapChainExtent.width; }
             uint32_t height() { return swapChainExtent.height; }
 
@@ -37,7 +36,7 @@ namespace Velt {
 
         private:
             void init();
-            void createSwapChain();
+            void createVulkanSwapchain();
             void createImageViews();
             void createDepthResources();
             void createRenderPass();
@@ -66,7 +65,7 @@ namespace Velt {
             VkExtent2D windowExtent;
 
             VkSwapchainKHR m_Swapchain;
-            SwapChain* m_OldSwapchain;
+            VulkanSwapchain* m_OldSwapchain;
 
             std::vector<VkSemaphore> imageAvailableSemaphores;
             std::vector<VkSemaphore> renderFinishedSemaphores;
@@ -74,5 +73,5 @@ namespace Velt {
             std::vector<VkFence> imagesInFlight;
             size_t currentFrame = 0;
         };
-    }
+    
 }

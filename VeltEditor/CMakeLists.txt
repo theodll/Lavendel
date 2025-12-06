@@ -7,7 +7,7 @@ add_executable(VeltEditor ${SANDBOX_SOURCES} "src/EditorLayer.cpp" "src/EditorLa
 
 target_include_directories(VeltEditor PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_SOURCE_DIR}/Velt
+    ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/vendor/spdlog/include
 )
 
