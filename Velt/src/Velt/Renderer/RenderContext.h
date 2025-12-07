@@ -13,8 +13,5 @@ namespace Velt::Renderer
 
 		static Ref<RendererContext> Create();
 	};
-
-	// blatanlty stole from hazel :D
-
 }
 

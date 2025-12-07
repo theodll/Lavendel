@@ -7,7 +7,7 @@
 namespace Velt::Renderer::Vulkan
 {
 
-	class VELT_API VulkanContext : public Renderer::RendererContext
+	class VELT_API VulkanContext : public RendererContext
 	{
 	public:
 		VulkanContext() = default;
@@ -19,5 +19,3 @@ namespace Velt::Renderer::Vulkan
 		static VulkanDevice s_Device;
 	};
 }
-
-

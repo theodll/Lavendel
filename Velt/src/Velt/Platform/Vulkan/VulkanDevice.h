@@ -3,10 +3,11 @@
 #include "vtpch.h"
 #include "Velt/Core/Core.h"
 #include "Velt/Renderer/Window.h"
+#include "Velt/Renderer/Device.h"
+#include "VulkanWindow.h"
 
 namespace Velt::Renderer::Vulkan {
 
-        // Forward declaration to break circular dependency
         class VELT_API Window;
 
         struct SwapChainSupportDetails
@@ -25,7 +26,7 @@ namespace Velt::Renderer::Vulkan {
             bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
         };
 
-		class VELT_API VulkanDevice
+		class VELT_API VulkanDevice : public Renderer::Device
         {
         public:
         #ifdef NDEBUG
@@ -34,14 +35,26 @@ namespace Velt::Renderer::Vulkan {
             const bool enableValidationLayers = true;
         #endif
 
-            VulkanDevice(Window& window);
+            VulkanDevice(RenderAPI::Window& window);
             ~VulkanDevice();
 
-            // Not copyable or movable
             VulkanDevice(const VulkanDevice&) = delete;
             void operator=(const VulkanDevice&) = delete;
             VulkanDevice(VulkanDevice&&) = delete;
             VulkanDevice& operator=(VulkanDevice&&) = delete;
+
+            virtual void* GetNativeDevice() override { return device(); }
+            virtual void* GetPhysicalDevice() override { return getPhysicalDevice(); }
+            virtual void* GetCommandPool() override { return getCommandPool(); }
+            virtual void* GetGraphicsQueue() override { return getGraphicsQueue(); }
+            virtual void* GetPresentQueue() override { return presentQueue(); }
+            virtual void* GetInstance() override { return getInstance(); }
+
+            virtual void CreateBuffer(size_t size, uint32_t usage, uint32_t properties, void** buffer, void** bufferMemory) override;
+            virtual void* BeginSingleTimeCommands() override { return beginSingleTimeCommands(); }
+            virtual void EndSingleTimeCommands(void* commandBuffer) override { endSingleTimeCommands(static_cast<VkCommandBuffer>(commandBuffer)); }
+            virtual void CopyBuffer(void* srcBuffer, void* dstBuffer, size_t size) override { copyBuffer(static_cast<VkBuffer>(srcBuffer), static_cast<VkBuffer>(dstBuffer), size); }
+            virtual uint32_t FindMemoryType(uint32_t typeFilter, uint32_t properties) override { return findMemoryType(typeFilter, properties); }
 
             VkCommandPool getCommandPool() { return m_CommandPool; }
             VkDevice device() { return m_Device; }
@@ -52,7 +65,6 @@ namespace Velt::Renderer::Vulkan {
             VkPhysicalDevice getPhysicalDevice() { return m_PhysicalDevice; }
             VkQueue getGraphicsQueue() { return m_GraphicsQueue; }
             uint32_t getQueueFamilyIndex() { return findPhysicalQueueFamilies().graphicsFamily; }
-            // Access underlying window
             RenderAPI::Window& getWindow() { return m_Window; }
             
             SwapChainSupportDetails getSwapChainSupport() { return querySwapChainSupport(m_PhysicalDevice); }
@@ -104,6 +116,7 @@ namespace Velt::Renderer::Vulkan {
             VkDebugUtilsMessengerEXT m_DebugMessenger;
             VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
             Velt::RenderAPI::Window& m_Window;
+            VulkanWindow m_VulkanWindow;
             VkCommandPool m_CommandPool;
 
             VkDevice m_Device;

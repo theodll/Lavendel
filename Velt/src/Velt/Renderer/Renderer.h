@@ -7,36 +7,32 @@
 
 namespace Velt::Renderer
 {
-	// Forward declaration
 	class Application;
 	class ImGuiLayer;
 	class LayerStack;
 
-	namespace Velt::Render
+	class VELT_API Renderer
 	{
-		class VELT_API Renderer
-		{
-		public:
-			Renderer();
-			~Renderer();
+	public:
+		Renderer();
+		~Renderer();
 
-			virtual void drawFrame();
+		virtual void drawFrame();
 
-			virtual void setImGuiLayer(ImGuiLayer* layer) = 0;
-			virtual void setLayerStack(LayerStack* layerStack) = 0;
-			
-			static void requestShutdown();
-			static void Shutdown();
+		virtual void setImGuiLayer(ImGuiLayer* layer) = 0;
+		virtual void setLayerStack(LayerStack* layerStack) = 0;
+		
+		static void requestShutdown();
+		static void Shutdown();
 
-			static void BeginRenderPass(Ref<RenderCommandBuffer> renderCommandbuffer, Ref<RenderPass> renderPass, bool explicitClear = false);
-			static void EndRenderPass(Ref<RenderCommandBuffer> renderCommandbuffer);
+		static void BeginRenderPass(Ref<RenderCommandBuffer> renderCommandbuffer, Ref<RenderPass> renderPass, bool explicitClear = false);
+		static void EndRenderPass(Ref<RenderCommandBuffer> renderCommandbuffer);
 
-		private:
-			virtual void loadModels() = 0;
-			virtual void createPipelineLayout() = 0;
-			virtual void createPipeline() = 0;
+	private:
+		virtual void loadModels() = 0;
+		virtual void createPipelineLayout() = 0;
+		virtual void createPipeline() = 0;
 
 
-		};
-	}
+	};
 }

@@ -1,10 +1,10 @@
 #include "vtpch.h"
 #include "VulkanDevice.h"
-#include "../Window.h"
+#include "VulkanWindow.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
 
-namespace Velt::Vulkan {
+namespace Velt::Renderer::Vulkan {
 
         static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
             VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -59,15 +59,15 @@ namespace Velt::Vulkan {
             }
         }
 
-        // class member functions
-        VulkanDevice::VulkanDevice(Window& window) : m_Window{ window }
+        VulkanDevice::VulkanDevice(RenderAPI::Window& window) 
+            : m_Window{ window }, m_VulkanWindow{ window }
         {
             VT_PROFILE_FUNCTION();
             VT_CORE_INFO("Creating VulkanDevice...");
             createInstance();
-			setupDebugMessenger(); // validation layers
+			setupDebugMessenger();
             createSurface();
-			pickPhysicalDevice(); // select GPU
+			pickPhysicalDevice();
             createLogicalDevice();
             createCommandPool();
         }
@@ -248,7 +248,11 @@ namespace Velt::Vulkan {
             }
         }
 
-        void VulkanDevice::createSurface() { VT_PROFILE_FUNCTION(); m_Window.createWindowSurface(m_Instance, &m_Surface); }
+        void VulkanDevice::createSurface() 
+        { 
+            VT_PROFILE_FUNCTION(); 
+            m_VulkanWindow.createWindowSurface(m_Instance, &m_Surface); 
+        }
 
         bool VulkanDevice::isDeviceSuitable(VkPhysicalDevice device)
         {

@@ -1,10 +1,11 @@
 #pragma once
 #include "vtpch.h"
 #include "VulkanDevice.h"
+#include "Velt/Renderer/Swapchain.h"
 
 namespace Velt::Renderer::Vulkan {
 
-        class VELT_API VulkanSwapchain
+        class VELT_API VulkanSwapchain : public Renderer::Swapchain
         {
         public:
             static constexpr int MAX_FRAMES_IN_FLIGHT = 3;
@@ -15,6 +16,16 @@ namespace Velt::Renderer::Vulkan {
 
             VulkanSwapchain(const VulkanSwapchain&) = delete;
             void operator=(const VulkanSwapchain&) = delete;
+
+            virtual void* GetFramebuffer(int index) override { return reinterpret_cast<void*>(getFrameBuffer(index)); }
+            virtual void* GetRenderPass() override { return reinterpret_cast<void*>(getRenderPass()); }
+            virtual void* GetImageView(int index) override { return reinterpret_cast<void*>(getImageView(index)); }
+            virtual size_t GetImageCount() const override { return imageCount(); }
+            virtual uint32_t GetWidth() const override { return width(); }
+            virtual uint32_t GetHeight() const override { return height(); }
+            virtual float GetAspectRatio() const override { return extentAspectRatio(); }
+            virtual int AcquireNextImage(uint32_t& imageIndex) override { return static_cast<int>(acquireNextImage(imageIndex)); }
+            virtual int SubmitCommandBuffers(const void* buffers, uint32_t* imageIndex) override { return static_cast<int>(submitCommandBuffers(reinterpret_cast<const VkCommandBuffer*>(buffers), imageIndex)); }
 
             VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
             VkRenderPass getRenderPass() { return renderPass; }

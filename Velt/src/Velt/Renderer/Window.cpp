@@ -2,7 +2,6 @@
 
 #include "Window.h"
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_vulkan.h>
 
 
 namespace Velt {
@@ -65,16 +64,6 @@ namespace Velt {
             {
                 SDL_DestroyWindow(m_Window);
                 m_Window = nullptr;
-            }
-        }
-
-        void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface)
-        {
-            VT_PROFILE_FUNCTION();
-            if (!SDL_Vulkan_CreateSurface(m_Window, instance, nullptr, surface))
-            {
-                VT_CORE_ERROR("Failed to create Vulkan surface: {}", SDL_GetError());
-                throw std::runtime_error("failed to create window surface!");
             }
         }
 

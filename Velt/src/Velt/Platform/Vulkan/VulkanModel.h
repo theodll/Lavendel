@@ -5,13 +5,14 @@
 
 #include "vtpch.h"
 #include "VulkanDevice.h"
+#include "Velt/Renderer/Model.h"
 
 
 
 
 namespace  Velt::Renderer::Vulkan
 {
-        class VELT_API Model
+        class VELT_API Model : public Renderer::Model
         {
 
 
@@ -31,6 +32,10 @@ namespace  Velt::Renderer::Vulkan
 
             Model(const Model &) = delete;
             Model &operator=(const Model &) = delete;
+
+            virtual void Bind(void* commandBuffer) override;
+            virtual void Draw(void* commandBuffer) override;
+            virtual uint32_t GetVertexCount() const override { return m_VertexCount; }
 
             void bind(VkCommandBuffer commandBuffer);
             void draw(VkCommandBuffer commandBuffer);

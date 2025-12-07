@@ -3,7 +3,7 @@
 
 namespace Velt::Renderer::Vulkan
 {
-	class VELT_API VulkanRenderer : public Velt::Render::Renderer
+	class VELT_API VulkanRenderer : public Renderer
 	{
 	public:
 		VulkanRenderer();

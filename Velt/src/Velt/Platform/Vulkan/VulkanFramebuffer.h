@@ -36,18 +36,15 @@ public:
 
   void Invalidate();
 
-  void BeginRenderPass(VkCommandBuffer commandBuffer);
-  void EndRenderPass(VkCommandBuffer commandBuffer);
+  virtual void BeginRenderPass(void* commandBuffer) override;
+  virtual void EndRenderPass(void* commandBuffer) override;
 
   virtual void Resize(u32 width, u32 height) override;
   virtual int ReadPixel(u32 attachmentIndex, int x, int y) override;
   virtual void ClearAttachment(uint32_t attachmentIndex, int value) override;
+  virtual void* GetNativeHandle() override { return m_Framebuffer; }
 
   virtual const FramebufferSpecification &GetSpecification() const override {
-    return m_Specification;
-  }
-
-  virtual const FramebufferSpecification &getSpecification() const override {
     return m_Specification;
   }
 

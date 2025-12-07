@@ -27,10 +27,10 @@ namespace Velt {
             void PollEvents() { SDL_PumpEvents(); }
             bool ShouldClose();
             void* GetNativeHandle() const { return m_Window; }
-            void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
-            VkExtent2D getExtent() const { return { static_cast<uint32_t>(m_Width), static_cast<uint32_t>(m_Height) }; }
 			bool wasWindodwResized() const { return m_bFrameBufferResized; }
 			void resetWindowResizedFlag() { m_bFrameBufferResized = false; }
+            int GetWidth() const { return m_Width; }
+            int GetHeight() const { return m_Height; }
 
         private:
             void Init(int width, int height, const std::string& title, bool bResizable);

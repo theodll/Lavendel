@@ -1,5 +1,6 @@
 #pragma once
 #include "vtpch.h"
+#include "Velt/Renderer/Pipeline.h"
 
 namespace Velt::Renderer::Vulkan 
 {
@@ -22,7 +23,7 @@ namespace Velt::Renderer::Vulkan
 			uint32_t subpass = 0;
 		};
 
-		class VELT_API VulkanPipeline
+		class VELT_API VulkanPipeline : public Renderer::Pipeline
 		{
 		public:
 			VulkanPipeline(VulkanDevice& device,
@@ -34,6 +35,9 @@ namespace Velt::Renderer::Vulkan
 
 			VulkanPipeline(const VulkanPipeline&) = delete;
 			void operator=(const VulkanPipeline&) = delete;
+
+			virtual void Bind(void* commandBuffer) override;
+			virtual void Destroy() override;
 
 			void bind(VkCommandBuffer commandBuffer);
 
