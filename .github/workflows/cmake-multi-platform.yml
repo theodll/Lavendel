@@ -1,23 +1,22 @@
-
 name: Build
 
-on:
+on: 
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
 
-jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
+jobs: 
+  build: 
+    runs-on:  ${{ matrix.os }}
+    strategy: 
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        build_type: [Release, Debug]
+        os:  [ubuntu-latest, windows-latest]
+        build_type:  [Release, Debug]
 
-    steps:
-      - name: Checkout repository
+    steps: 
+      - name:  Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
@@ -25,17 +24,20 @@ jobs:
       - name: Install Vulkan SDK (Ubuntu)
         if: runner.os == 'Linux'
         run: |
-          wget -qO- https://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo tee /etc/apt/trusted.gpg.d/lunarg.asc
-          sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-jammy.list https://packages.lunarg.com/vulkan/lunarg-vulkan-jammy.list
+          wget -qO- https://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo tee /etc/apt/trusted.gpg. d/lunarg.asc
+          sudo wget -qO /etc/apt/sources. list.d/lunarg-vulkan-noble.list https://packages.lunarg.com/vulkan/lunarg-vulkan-noble.list
           sudo apt-get update
           sudo apt-get install -y vulkan-sdk
 
       - name: Install Vulkan SDK (Windows)
         if: runner.os == 'Windows'
-        uses: humbletim/install-vulkan-sdk@v1.2
-        with: 
-          version: 1.4.328.1
-          cache: true
+        run: |
+          $ver = "1.4.328.1"
+          $sdk_url = "https://sdk.lunarg.com/sdk/download/$ver/windows/VulkanSDK-$ver-Installer.exe"
+          Invoke-WebRequest -Uri $sdk_url -OutFile VulkanSDK. exe
+          Start-Process -FilePath .\VulkanSDK.exe -ArgumentList "--accept-licenses --default-answer --confirm-command install" -Wait
+          echo "VULKAN_SDK=C:\VulkanSDK\$ver" >> $env: GITHUB_ENV
+          echo "C:\VulkanSDK\$ver\Bin" >> $env:GITHUB_PATH
 
       - name: Install dependencies (Ubuntu)
         if: runner.os == 'Linux'
