@@ -1,15 +1,12 @@
 #pragma once
 #include "Velt/Core/Core.h"
 #include "Velt/Renderer/VertexBuffer.h"
+#include "VulkanDevice.h"
 #include <vulkan/vulkan.h>
 
-namespace Velt::Renderer
+namespace Velt::Renderer::Vulkan
  {
-    struct VulkanVertexBufferElement
-    {
-		u64 size;
-		void* data;
-	};
+
 
     class VulkanVertexBuffer : public VertexBuffer
     {
@@ -19,10 +16,15 @@ namespace Velt::Renderer
 
         virtual ~VulkanVertexBuffer() {}
 
+        void CreateVertexBuffer();
+        void CleanUp();
+
         virtual void Bind() const;
         virtual void Unbind() const;
 
     private:
         u32 m_RendererID{};
+        const VulkanDevice* m_Device = nullptr;
+        VertexBufferElement elements;
     };
  }
