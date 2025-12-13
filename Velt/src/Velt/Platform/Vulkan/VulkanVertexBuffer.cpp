@@ -1,62 +1,79 @@
 #include "vtpch.h"
 #include "VulkanVertexBuffer.h"
-#include "VulkanContext.h"
-#include "VulkanDevice.h"
 
 namespace Velt::Renderer::Vulkan
 {
-	
+    VulkanVertexBuffer::VulkanVertexBuffer(
+        const void* vertexData,
+        u32 vertexCount,
+        VkDeviceSize vertexStride
+    )
+        : m_Device(VulkanContext::getDevice()),
+          m_VertexCount(vertexCount),
+          m_VertexStride(vertexStride)
+    {
+        VT_PROFILE_FUNCTION();
+        VT_CORE_TRACE("Creating Vulkan Vertex Buffer");
 
-	VulkanVertexBuffer::VulkanVertexBuffer(VertexBufferElement& elements) : m_Elements(elements)
-	{
-		VT_PROFILE_FUNCTION();
-		VT_CORE_TRACE("Creating Vulkan Vertex Buffer");
-		m_Device = VulkanContext::getDevice();
-	
-	}
+        VT_CORE_ASSERT(vertexData, "Vertex data must not be null");
+        VT_CORE_ASSERT(vertexCount > 0, "Vertex count must be > 0");
+        VT_CORE_ASSERT(vertexStride > 0, "Vertex stride must be > 0");
 
+        CreateBuffer(vertexData);
+    }
 
-	void VulkanVertexBuffer::CreateVertexBuffers()
-	{
-		VT_PROFILE_FUNCTION();
-		m_VertexCount = static_cast<u32>(m_Elements.vertecies.size());
+    VulkanVertexBuffer::~VulkanVertexBuffer()
+    {
+        VT_PROFILE_FUNCTION();
+        VT_CORE_TRACE("Destroying Vulkan Vertex Buffer");
 
-		if (m_VertexCount < 3)
-		{
-			VT_CORE_ERROR("Vertex Count must be at least 3");
-		}
-		assert(m_VertexCount >= 3 && "Vertex count must be at least 3");
+        if (m_VertexBuffer != VK_NULL_HANDLE)
+        {
+            vkDestroyBuffer(m_Device.device(), m_VertexBuffer, nullptr);
+            m_VertexBuffer = VK_NULL_HANDLE;
+        }
 
-		VkDeviceSize bufferSize = sizeof(vertecies[0]) * m_VertexCount;
-		m_Device.createBuffer(
-			bufferSize,
-			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			m_VertexBuffer,
-			m_VertexBufferMemory
-		);
+        if (m_VertexBufferMemory != VK_NULL_HANDLE)
+        {
+            vkFreeMemory(m_Device.device(), m_VertexBufferMemory, nullptr);
+            m_VertexBufferMemory = VK_NULL_HANDLE;
+        }
+    }
 
-		void* data;
-		vkMapMemory(m_Device.device(), m_VertexBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, vertecies.data(), static_cast<size_t>(bufferSize));
-		vkUnmapMemory(m_Device.device(), m_VertexBufferMemory);
-	};
+    void VulkanVertexBuffer::CreateBuffer(const void* data)
+    {
+        VkDeviceSize bufferSize = m_VertexStride * m_VertexCount;
 
+        m_Device.createBuffer(
+            bufferSize,
+            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+            VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+            m_VertexBuffer,
+            m_VertexBufferMemory
+        );
 
-	VulkanVertexBuffer::~VulkanVertexBuffer()
-	{
-		VT_PROFILE_FUNCTION();
-		VT_CORE_TRACE("Destroying Vulkan Vertex Buffer");
+        void* mappedData = nullptr;
+        vkMapMemory(
+            m_Device.device(),
+            m_VertexBufferMemory,
+            0,
+            bufferSize,
+            0,
+            &mappedData
+        );
 
-	}
-	void VulkanVertexBuffer::Bind() const
-	{
-		VT_PROFILE_FUNCTION();
+        memcpy(mappedData, data, static_cast<size_t>(bufferSize));
+        vkUnmapMemory(m_Device.device(), m_VertexBufferMemory);
+    }
 
-	}
-	void VulkanVertexBuffer::Unbind() const
-	{
-		VT_PROFILE_FUNCTION();
+    void VulkanVertexBuffer::Bind() const
+    {
 
-	}
+    }
+
+    void VulkanVertexBuffer::Unbind() const
+    {
+ 
+    }
 }
